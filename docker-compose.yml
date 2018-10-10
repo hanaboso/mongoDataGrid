@@ -1,0 +1,23 @@
+version: '3.3'
+
+services:
+    php:
+        image: dkr.hanaboso.net/hanaboso/mongodatagrid/app:dev
+        user: ${DEV_UID}:${DEV_GID}
+        environment:
+            DEV_UID: ${DEV_UID}
+            DEV_GID: ${DEV_GID}
+        volumes:
+            - ./:/var/www
+            - ${SSH_AUTH_SOCK}:/tmp/bound-ssh-agent
+            - ${HOME}/.composer:/srv/.composer
+
+    mongo:
+        image: mongo:latest
+        ports:
+            - ${DEV_IP}:27017:27017
+        volumes:
+            - mongo:/data/db
+
+volumes:
+    mongo: {}
