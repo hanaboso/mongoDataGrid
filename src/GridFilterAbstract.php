@@ -112,9 +112,11 @@ abstract class GridFilterAbstract
     public function getData(GridRequestDtoInterface $gridRequestDto): ResultData
     {
         $this->processSortations($gridRequestDto);
-        $this->processConditions($gridRequestDto);
+        $this->processConditions($gridRequestDto, $this->searchQuery);
 
-        if (!$this->countQuery) {
+        if ($this->countQuery) {
+            $this->processConditions($gridRequestDto, $this->countQuery);
+        } else {
             $this->countQuery = clone $this->searchQuery;
         }
 
@@ -163,11 +165,12 @@ abstract class GridFilterAbstract
 
     /**
      * @param GridRequestDtoInterface $dto
+     * @param Builder                 $builder
      *
      * @throws GridException
      * @throws MongoException
      */
-    private function processConditions(GridRequestDtoInterface $dto): void
+    private function processConditions(GridRequestDtoInterface $dto, Builder $builder): void
     {
         $conditions = $dto->getFilter();
 
@@ -200,21 +203,21 @@ abstract class GridFilterAbstract
                 $column = $this->filterCols[$column];
 
                 if (is_null($value)) {
-                    $this->searchQuery->field($column)->equals(NULL);
+                    $builder->field($column)->equals(NULL);
                 } elseif ($value === self::FILER_VAL_NOT_NULL) {
-                    $this->searchQuery->field($column)->notEqual(NULL);
+                    $builder->field($column)->notEqual(NULL);
                 } elseif (is_array($value)) {
-                    $this->searchQuery->field($column)->in($value);
+                    $builder->field($column)->in($value);
                 } elseif (preg_match('/^([^\s]+)>=$/', $column, $columnMatches)) {
-                    $this->searchQuery->field($columnMatches[1])->gte($value);
+                    $builder->field($columnMatches[1])->gte($value);
                 } elseif (preg_match('/^([^\s]+)>$/', $column, $columnMatches)) {
-                    $this->searchQuery->field($columnMatches[1])->gt($value);
+                    $builder->field($columnMatches[1])->gt($value);
                 } elseif (preg_match('/^([^\s]+)<=$/', $column, $columnMatches)) {
-                    $this->searchQuery->field($columnMatches[1])->lte($value);
+                    $builder->field($columnMatches[1])->lte($value);
                 } elseif (preg_match('/^([^\s]+)<$/', $column, $columnMatches)) {
-                    $this->searchQuery->field($columnMatches[1])->lt($value);
+                    $builder->field($columnMatches[1])->lt($value);
                 } else {
-                    $this->searchQuery->field($column)->equals($value);
+                    $builder->field($column)->equals($value);
                 }
             }
         }
@@ -222,7 +225,7 @@ abstract class GridFilterAbstract
         $search = $conditions[self::FILTER_SEARCH_KEY] ?? '';
 
         if ($search) {
-            $searchExpression = $this->searchQuery->expr();
+            $searchExpression = $builder->expr();
 
             if (!$this->searchableCols) {
                 throw new GridException(
@@ -236,10 +239,10 @@ abstract class GridFilterAbstract
 
             foreach ($this->searchableCols as $column) {
                 $regex = new MongoRegex(sprintf('/.*%s.*/i', preg_quote($search)));
-                $searchExpression->addOr($this->searchQuery->expr()->field($column)->equals($regex));
+                $searchExpression->addOr($builder->expr()->field($column)->equals($regex));
             }
 
-            $this->searchQuery->addAnd($searchExpression);
+            $builder->addAnd($searchExpression);
         }
     }
 

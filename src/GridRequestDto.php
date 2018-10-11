@@ -175,7 +175,7 @@ class GridRequestDto implements GridRequestDtoInterface
     {
         return [
             self::FILTER   => $this->formatFilterForHeader($this->getFilter()),
-            self::PAGE     => (int) $this->getPage(),
+            self::PAGE     => (int) $this->getPage() ?: 1,
             self::LIMIT    => $this->getLimit(),
             self::TOTAL    => $this->total,
             self::ORDER_BY => $this->getOrderByForHeader(),

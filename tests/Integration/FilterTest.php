@@ -1158,9 +1158,9 @@ final class FilterTest extends TestCaseAbstract
         ], $result);
         self::assertEquals([
             'filter'  => ['int' => '6,7,8'],
-            'page'    => 0,
+            'page'    => 1,
             'limit'   => 10,
-            'total'   => 10,
+            'total'   => 3,
             'orderby' => NULL,
         ], $dto->getParamsForHeader());
 
@@ -1179,9 +1179,9 @@ final class FilterTest extends TestCaseAbstract
         ], $result);
         self::assertEquals([
             'filter'  => ['search' => '9'],
-            'page'    => 0,
+            'page'    => 1,
             'limit'   => 10,
-            'total'   => 10,
+            'total'   => 1,
             'orderby' => NULL,
         ], $dto->getParamsForHeader());
 
@@ -1367,9 +1367,9 @@ final class FilterTest extends TestCaseAbstract
         self::assertEquals([], $result);
         self::assertEquals([
             'filter'  => ['search' => 'Unknown'],
-            'page'    => 0,
+            'page'    => 1,
             'limit'   => 10,
-            'total'   => 10,
+            'total'   => 0,
             'orderby' => NULL,
         ], $dto->getParamsForHeader());
 
