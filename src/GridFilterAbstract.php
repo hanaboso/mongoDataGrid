@@ -4,12 +4,14 @@ namespace Hanaboso\MongoDataGrid;
 
 use DateTime;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\MongoDB\Exception\ResultException;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Hanaboso\MongoDataGrid\Exception\GridException;
 use Hanaboso\MongoDataGrid\Result\ResultData;
+use LogicException;
 use MongoException;
 use MongoRegex;
 
@@ -67,6 +69,11 @@ abstract class GridFilterAbstract
     protected $search;
 
     /**
+     * @var bool
+     */
+    protected $useTextSearch = FALSE;
+
+    /**
      * @var array
      */
     protected $filterCols = [];
@@ -122,8 +129,19 @@ abstract class GridFilterAbstract
 
         $this->processPagination($gridRequestDto);
 
-        $data = new ResultData($this->searchQuery->getQuery());
-        $gridRequestDto->setTotal($this->countQuery->count()->getQuery()->execute());
+        try {
+            $data = new ResultData($this->searchQuery->getQuery());
+            $gridRequestDto->setTotal($this->countQuery->count()->getQuery()->execute());
+        } catch (ResultException $e) {
+            if ($e->getCode() === 27) {
+                throw new LogicException(sprintf(
+                    "Column cannot be used for searching! Missing TEXT index on '%s::searchableCols' fields!",
+                    static::class
+                ));
+            }
+
+            throw $e;
+        }
 
         return $data;
     }
@@ -225,6 +243,10 @@ abstract class GridFilterAbstract
         $search = $conditions[self::FILTER_SEARCH_KEY] ?? '';
 
         if ($search) {
+            if ($this->useTextSearch) {
+                $builder->text($search);
+            }
+
             $searchExpression = $builder->expr();
 
             if (!$this->searchableCols) {
