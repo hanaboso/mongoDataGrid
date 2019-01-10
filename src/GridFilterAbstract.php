@@ -5,6 +5,7 @@ namespace Hanaboso\MongoDataGrid;
 use DateTime;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\MongoDB\Exception\ResultException;
+use Doctrine\MongoDB\Query\Expr;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ODM\MongoDB\MongoDBException;
@@ -32,6 +33,24 @@ abstract class GridFilterAbstract
      * Value for filter when filter creates where `dbCol` IS NOT NULL
      */
     public const FILER_VAL_NOT_NULL = '_MODIFIER_VAL_NOT_NULL';
+
+    public const EQ       = 'EQ';
+    public const NEQ      = 'NEQ';
+    public const GT       = 'GT';
+    public const LT       = 'LT';
+    public const GTE      = 'GTE';
+    public const LTE      = 'LTE';
+    public const LIKE     = 'LIKE';
+    public const STARTS   = 'STARTS';
+    public const ENDS     = 'ENDS';
+    public const FL       = 'FL';
+    public const NFL      = 'NFL';
+    public const BETWEEN  = 'BETWEEN';
+    public const NBETWEEN = 'NBETWEEN';
+
+    public const COLUMN    = 'column';
+    public const OPERATION = 'operation';
+    public const VALUE     = 'value';
 
     /**
      * @var DocumentManager
@@ -190,7 +209,10 @@ abstract class GridFilterAbstract
      */
     private function processConditions(GridRequestDtoInterface $dto, Builder $builder): void
     {
-        $conditions = $dto->getFilter();
+        $conditions                  = $dto->getFilter();
+        $advancedConditions          = $dto->getAdvancedFilter();
+        $conditionExpression         = $builder->expr();
+        $advancedConditionExpression = $builder->expr();
 
         if ($conditions) {
             foreach ($conditions as $column => $value) {
@@ -198,49 +220,108 @@ abstract class GridFilterAbstract
                     continue;
                 }
 
-                if (!isset($this->filterCols[$column])) {
-                    throw new GridException(
-                        sprintf(
-                            "Column '%s' cannot be used for filtering! Have you forgotten add it to '%s::filterCols'?",
-                            $column,
-                            static::class
-                        ),
-                        GridException::FILTER_COLS_ERROR
-                    );
-                }
+                $this->checkFilterColumn($column);
 
                 if (isset($this->filterColsCallbacks[$column])) {
-                    $this->filterColsCallbacks[$column]($this->searchQuery, $value, $this->filterCols[$column]);
+                    $expression = $builder->expr();
+
+                    $this->filterColsCallbacks[$column](
+                        $this->searchQuery,
+                        $value,
+                        $this->filterCols[$column],
+                        $expression,
+                        NULL
+                    );
+
+                    $conditionExpression->addAnd($expression);
                     continue;
                 }
 
-                if (is_string($value) && preg_match('/\d{4}-\d{2}-\d{2}.\d{2}:\d{2}:\d{2}/', $value)) {
-                    $value = new DateTime($value);
-                }
-
+                $value  = $this->processDateTime($value);
                 $column = $this->filterCols[$column];
 
                 if (is_null($value)) {
-                    $builder->field($column)->equals(NULL);
+                    $conditionExpression->addAnd($builder->expr()->field($column)->equals(NULL));
                 } elseif ($value === self::FILER_VAL_NOT_NULL) {
-                    $builder->field($column)->notEqual(NULL);
+                    $conditionExpression->addAnd($builder->expr()->field($column)->notEqual(NULL));
                 } elseif (is_array($value)) {
-                    $builder->field($column)->in($value);
+                    $conditionExpression->addAnd($builder->expr()->field($column)->in($value));
                 } elseif (preg_match('/^([^\s]+)>=$/', $column, $columnMatches)) {
-                    $builder->field($columnMatches[1])->gte($value);
+                    $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->gte($value));
                 } elseif (preg_match('/^([^\s]+)>$/', $column, $columnMatches)) {
-                    $builder->field($columnMatches[1])->gt($value);
+                    $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->gt($value));
                 } elseif (preg_match('/^([^\s]+)<=$/', $column, $columnMatches)) {
-                    $builder->field($columnMatches[1])->lte($value);
+                    $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->lte($value));
                 } elseif (preg_match('/^([^\s]+)<$/', $column, $columnMatches)) {
-                    $builder->field($columnMatches[1])->lt($value);
+                    $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->lt($value));
                 } else {
-                    $builder->field($column)->equals($value);
+                    $conditionExpression->addAnd($builder->expr()->field($column)->equals($value));
                 }
             }
         }
 
-        $search = $conditions[self::FILTER_SEARCH_KEY] ?? '';
+        if ($conditions && (count($conditions) !== 1 || !isset($conditions[self::FILTER_SEARCH_KEY]))) {
+            $builder->addAnd($conditionExpression);
+        }
+
+        $search   = NULL;
+        $isSearch = TRUE;
+        foreach ($advancedConditions as $andCondition) {
+            $expression = $builder->expr();
+
+            foreach ($andCondition as $orCondition) {
+                if (!array_key_exists(self::COLUMN, $orCondition) ||
+                    !array_key_exists(self::OPERATION, $orCondition) ||
+                    !array_key_exists(self::VALUE, $orCondition)) {
+                    throw new LogicException(sprintf(
+                        "Advanced filter must have '%s', '%s' and '%s' field!",
+                        self::COLUMN,
+                        self::OPERATION,
+                        self::VALUE
+                    ));
+                }
+
+                $column = $orCondition[self::COLUMN];
+                if ($column === self::FILTER_SEARCH_KEY) {
+                    $search = $orCondition[self::VALUE];
+                    continue;
+                }
+
+                $this->checkFilterColumn($column);
+                $isSearch                 = FALSE;
+                $orCondition[self::VALUE] = $this->processDateTime($orCondition[self::VALUE]);
+
+                if (isset($this->filterColsCallbacks[$column])) {
+                    $expression = $builder->expr();
+
+                    $this->filterColsCallbacks[$column](
+                        $this->searchQuery,
+                        $orCondition[self::VALUE],
+                        $this->filterCols[$column],
+                        $expression,
+                        $orCondition[self::OPERATION]
+                    );
+
+                    $advancedConditionExpression->addAnd($expression);
+                    continue;
+                }
+
+                $expression->addOr(self::getCondition(
+                    $builder,
+                    $this->filterCols[$column],
+                    $orCondition[self::VALUE],
+                    $orCondition[self::OPERATION]
+                ));
+            }
+
+            $advancedConditionExpression->addAnd($expression);
+        }
+
+        if ($advancedConditions && !$isSearch) {
+            $builder->addAnd($advancedConditionExpression);
+        }
+
+        $search = $conditions[self::FILTER_SEARCH_KEY] ?? $search ?? '';
 
         if ($search) {
             if ($this->useTextSearch) {
@@ -260,8 +341,7 @@ abstract class GridFilterAbstract
             }
 
             foreach ($this->searchableCols as $column) {
-                $regex = new MongoRegex(sprintf('/.*%s.*/i', preg_quote($search)));
-                $searchExpression->addOr($builder->expr()->field($column)->equals($regex));
+                $searchExpression->addOr(self::getCondition($builder, $column, $search, self::LIKE));
             }
 
             $builder->addAnd($searchExpression);
@@ -277,6 +357,39 @@ abstract class GridFilterAbstract
         $limit = $dto->getLimit();
 
         $this->searchQuery->skip(--$page * $limit)->limit($limit);
+    }
+
+    /**
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    private function processDateTime($value)
+    {
+        if (is_string($value) && preg_match('/\d{4}-\d{2}-\d{2}.\d{2}:\d{2}:\d{2}/', $value)) {
+            return new DateTime($value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param string $column
+     *
+     * @throws GridException
+     */
+    private function checkFilterColumn(string $column): void
+    {
+        if (!isset($this->filterCols[$column])) {
+            throw new GridException(
+                sprintf(
+                    "Column '%s' cannot be used for filtering! Have you forgotten add it to '%s::filterCols'?",
+                    $column,
+                    static::class
+                ),
+                GridException::FILTER_COLS_ERROR
+            );
+        }
     }
 
     /**
@@ -313,6 +426,65 @@ abstract class GridFilterAbstract
     protected function configCustomCountQuery(): void
     {
 
+    }
+
+    /**
+     * @param Builder     $builder
+     * @param string      $name
+     * @param mixed       $value
+     * @param string|NULL $operator
+     *
+     * @return Expr
+     * @throws MongoException
+     */
+    public static function getCondition(Builder $builder, string $name, $value, ?string $operator = NULL): Expr
+    {
+        switch ($operator) {
+            case self::EQ:
+                return is_array($value) ?
+                    $builder->expr()->field($name)->in($value) :
+                    $builder->expr()->field($name)->equals($value);
+            case self::NEQ:
+                return is_array($value) ?
+                    $builder->expr()->field($name)->notIn($value) :
+                    $builder->expr()->field($name)->notEqual($value);
+            case self::GTE:
+                return $builder->expr()->field($name)->gte($value);
+            case self::GT:
+                return $builder->expr()->field($name)->gt($value);
+            case self::LTE:
+                return $builder->expr()->field($name)->lte($value);
+            case self::LT:
+                return $builder->expr()->field($name)->lt($value);
+            case self::FL:
+                return $builder->expr()->field($name)->notEqual(NULL);
+            case self::NFL:
+                return $builder->expr()->field($name)->equals(NULL);
+            case self::LIKE:
+                return $builder->expr()->field($name)->equals(new MongoRegex(sprintf('/.*%s.*/i', preg_quote($value))));
+            case self::STARTS:
+                return $builder->expr()->field($name)->equals(new MongoRegex(sprintf('/^%s.*/i', preg_quote($value))));
+            case self::ENDS:
+                return $builder->expr()->field($name)->equals(new MongoRegex(sprintf('/.*%s$/i', preg_quote($value))));
+            case self::BETWEEN:
+                if (is_array($value) && count($value) >= 2) {
+                    return $builder->expr()
+                        ->addAnd($builder->expr()->field($name)->gte($value[0]))
+                        ->addAnd($builder->expr()->field($name)->lte($value[1]));
+                }
+
+                return $builder->expr()->field($name)->equals($value);
+            case self::NBETWEEN:
+                if (is_array($value) && count($value) >= 2) {
+                    return $builder->expr()
+                        ->addOr($builder->expr()->field($name)->lte($value[0]))
+                        ->addOr($builder->expr()->field($name)->gte($value[1]));
+                }
+
+                return $builder->expr()->field($name)->notEqual($value);
+            default:
+                return $builder->expr()->field($name)->equals($value);
+        }
     }
 
 }

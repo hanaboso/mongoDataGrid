@@ -12,13 +12,14 @@ use Throwable;
 class GridRequestDto implements GridRequestDtoInterface
 {
 
-    public const  LIMIT         = 'limit';
-    private const FILTER        = 'filter';
-    private const PAGE          = 'page';
-    private const TOTAL         = 'total';
-    private const ORDER_BY      = 'orderby';
-    private const SEARCH        = 'search';
-    private const DEFAULT_LIMIT = 10;
+    public const  LIMIT           = 'limit';
+    private const FILTER          = 'filter';
+    private const ADVANCED_FILTER = 'advanced_filter';
+    private const PAGE            = 'page';
+    private const TOTAL           = 'total';
+    private const ORDER_BY        = 'orderby';
+    private const SEARCH          = 'search';
+    private const DEFAULT_LIMIT   = 10;
 
     /**
      * @var array
@@ -69,28 +70,49 @@ class GridRequestDto implements GridRequestDtoInterface
     }
 
     /**
+     * @return array
+     */
+    public function getAdvancedFilter(): array
+    {
+        if (array_key_exists(self::ADVANCED_FILTER, $this->headers)) {
+            $andConditions = json_decode($this->getHeader(self::ADVANCED_FILTER), TRUE);
+
+            foreach ($andConditions as &$andCondition) {
+                foreach ($andCondition as &$orCondition) {
+                    if (array_key_exists('column', $orCondition) && $orCondition['column'] === self::SEARCH) {
+                        $orCondition['column'] = GridFilterAbstract::FILTER_SEARCH_KEY;
+                    }
+                }
+            }
+
+            return $andConditions;
+        }
+
+        return [];
+    }
+
+    /**
      * @param array $filter
      *
      * @return GridRequestDto
      */
     public function setAdditionalFilters(array $filter): self
     {
-        $this->filter = $this->getFilter();
-        $this->filter = array_merge($this->filter, $filter);
+        $this->filter = array_merge($this->getFilter(), $filter);
 
         return $this;
     }
 
     /**
-     * @return string|NULL
+     * @return int
      */
-    public function getPage(): ?string
+    public function getPage(): int
     {
         if (array_key_exists(self::PAGE, $this->headers)) {
-            return $this->getHeader(self::PAGE);
+            return intval($this->getHeader(self::PAGE));
         }
 
-        return NULL;
+        return 1;
     }
 
     /**
@@ -157,9 +179,17 @@ class GridRequestDto implements GridRequestDtoInterface
     }
 
     /**
+     * @return int
+     */
+    public function getTotal(): int
+    {
+        return $this->total;
+    }
+
+    /**
      * @param int $total
      *
-     * @return GridRequestDto
+     * @return GridRequestDtoInterface
      */
     public function setTotal(int $total): GridRequestDtoInterface
     {
@@ -175,7 +205,7 @@ class GridRequestDto implements GridRequestDtoInterface
     {
         return [
             self::FILTER   => $this->formatFilterForHeader($this->getFilter()),
-            self::PAGE     => (int) $this->getPage() ?: 1,
+            self::PAGE     => $this->getPage(),
             self::LIMIT    => $this->getLimit(),
             self::TOTAL    => $this->total,
             self::ORDER_BY => $this->getOrderByForHeader(),

@@ -3,6 +3,7 @@
 namespace Tests\Filter;
 
 use Doctrine\ODM\MongoDB\Query\Builder;
+use Doctrine\ODM\MongoDB\Query\Expr;
 use Hanaboso\MongoDataGrid\GridFilterAbstract;
 use Tests\Document\Document;
 
@@ -53,6 +54,11 @@ final class DocumentFilter extends GridFilterAbstract
     ];
 
     /**
+     * @var bool
+     */
+    protected $useTextSearch = TRUE;
+
+    /**
      *
      */
     protected function prepareSearchQuery(): void
@@ -84,8 +90,17 @@ final class DocumentFilter extends GridFilterAbstract
         parent::configFilterColsCallbacks();
 
         $this->filterColsCallbacks = [
-            'custom_string' => function (Builder $builder, string $value, string $name): void {
-                $builder->field($name)->equals($value);
+            'custom_string' => function (
+                Builder $builder,
+                string $value,
+                string $name,
+                Expr $expr,
+                ?string $operator
+            ): void {
+                $builder;
+                $operator;
+
+                $expr->field($name)->equals($value);
             },
         ];
     }

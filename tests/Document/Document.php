@@ -11,6 +11,9 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
  * @package Tests\Document
  *
  * @ODM\Document
+ * @ODM\Indexes({
+ *     @ODM\Index(keys={"string"="text", "int"="text", "float"="text"})
+ * })
  */
 final class Document
 {

@@ -16,9 +16,14 @@ interface GridRequestDtoInterface
     public function getFilter(): array;
 
     /**
-     * @return string|NULL
+     * @return array
      */
-    public function getPage(): ?string;
+    public function getAdvancedFilter(): array;
+
+    /**
+     * @return int
+     */
+    public function getPage(): int;
 
     /**
      * @return int

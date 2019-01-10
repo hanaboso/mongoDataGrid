@@ -9,6 +9,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 use Exception;
 use PHPUnit\Framework\TestCase;
+use Tests\Document\Document;
 
 /**
  * Class TestCaseAbstract
@@ -45,6 +46,7 @@ abstract class TestCaseAbstract extends TestCase
         $this->dm = DocumentManager::create(new Connection(self::HOSTNAME), $configuration);
         $this->dm->getConnection()->dropDatabase(self::DATABASE);
         $this->dm->getSchemaManager()->createCollections();
+        $this->dm->getSchemaManager()->ensureDocumentIndexes(Document::class);
     }
 
 }
