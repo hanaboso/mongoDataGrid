@@ -1731,7 +1731,11 @@ final class FilterTest extends TestCaseAbstract
                     [
                         'column'    => 'string',
                         'operation' => DocumentFilter::NFL,
-                        'value'     => NULL,
+                    ], [
+
+                        'column'    => 'string',
+                        'operation' => 'Unknown',
+                        'value'     => 'Unknown',
                     ],
                 ],
             ]),
@@ -1744,7 +1748,6 @@ final class FilterTest extends TestCaseAbstract
                     [
                         'column'    => 'string',
                         'operation' => DocumentFilter::FL,
-                        'value'     => '_MODIFIER_VAL_NOT_NULL',
                     ],
                 ],
             ]),

@@ -214,49 +214,51 @@ abstract class GridFilterAbstract
         $conditionExpression         = $builder->expr();
         $advancedConditionExpression = $builder->expr();
 
-        if ($conditions) {
-            foreach ($conditions as $column => $value) {
-                if ($column === self::FILTER_SEARCH_KEY) {
-                    continue;
-                }
+        /**
+         * @var string $column
+         * @var mixed  $value
+         */
+        foreach ($conditions as $column => $value) {
+            if ($column === self::FILTER_SEARCH_KEY) {
+                continue;
+            }
 
-                $this->checkFilterColumn($column);
+            $this->checkFilterColumn($column);
 
-                if (isset($this->filterColsCallbacks[$column])) {
-                    $expression = $builder->expr();
+            if (isset($this->filterColsCallbacks[$column])) {
+                $expression = $builder->expr();
 
-                    $this->filterColsCallbacks[$column](
-                        $this->searchQuery,
-                        $value,
-                        $this->filterCols[$column],
-                        $expression,
-                        NULL
-                    );
+                $this->filterColsCallbacks[$column](
+                    $this->searchQuery,
+                    $value,
+                    $this->filterCols[$column],
+                    $expression,
+                    NULL
+                );
 
-                    $conditionExpression->addAnd($expression);
-                    continue;
-                }
+                $conditionExpression->addAnd($expression);
+                continue;
+            }
 
-                $value  = $this->processDateTime($value);
-                $column = $this->filterCols[$column];
+            $value  = $this->processDateTime($value);
+            $column = $this->filterCols[$column];
 
-                if (is_null($value)) {
-                    $conditionExpression->addAnd($builder->expr()->field($column)->equals(NULL));
-                } elseif ($value === self::FILER_VAL_NOT_NULL) {
-                    $conditionExpression->addAnd($builder->expr()->field($column)->notEqual(NULL));
-                } elseif (is_array($value)) {
-                    $conditionExpression->addAnd($builder->expr()->field($column)->in($value));
-                } elseif (preg_match('/^([^\s]+)>=$/', $column, $columnMatches)) {
-                    $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->gte($value));
-                } elseif (preg_match('/^([^\s]+)>$/', $column, $columnMatches)) {
-                    $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->gt($value));
-                } elseif (preg_match('/^([^\s]+)<=$/', $column, $columnMatches)) {
-                    $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->lte($value));
-                } elseif (preg_match('/^([^\s]+)<$/', $column, $columnMatches)) {
-                    $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->lt($value));
-                } else {
-                    $conditionExpression->addAnd($builder->expr()->field($column)->equals($value));
-                }
+            if (is_null($value)) {
+                $conditionExpression->addAnd($builder->expr()->field($column)->equals(NULL));
+            } elseif ($value === self::FILER_VAL_NOT_NULL) {
+                $conditionExpression->addAnd($builder->expr()->field($column)->notEqual(NULL));
+            } elseif (is_array($value)) {
+                $conditionExpression->addAnd($builder->expr()->field($column)->in($value));
+            } elseif (preg_match('/^([^\s]+)>=$/', $column, $columnMatches)) {
+                $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->gte($value));
+            } elseif (preg_match('/^([^\s]+)>$/', $column, $columnMatches)) {
+                $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->gt($value));
+            } elseif (preg_match('/^([^\s]+)<=$/', $column, $columnMatches)) {
+                $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->lte($value));
+            } elseif (preg_match('/^([^\s]+)<$/', $column, $columnMatches)) {
+                $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->lt($value));
+            } else {
+                $conditionExpression->addAnd($builder->expr()->field($column)->equals($value));
             }
         }
 
@@ -272,13 +274,18 @@ abstract class GridFilterAbstract
             foreach ($andCondition as $orCondition) {
                 if (!array_key_exists(self::COLUMN, $orCondition) ||
                     !array_key_exists(self::OPERATION, $orCondition) ||
-                    !array_key_exists(self::VALUE, $orCondition)) {
+                    !array_key_exists(self::VALUE, $orCondition) &&
+                    !in_array($orCondition[self::OPERATION], [self::FL, self::NFL], TRUE)) {
                     throw new LogicException(sprintf(
                         "Advanced filter must have '%s', '%s' and '%s' field!",
                         self::COLUMN,
                         self::OPERATION,
                         self::VALUE
                     ));
+                }
+
+                if (!array_key_exists(self::VALUE, $orCondition)) {
+                    $orCondition[self::VALUE] = '';
                 }
 
                 $column = $orCondition[self::COLUMN];
@@ -457,9 +464,13 @@ abstract class GridFilterAbstract
             case self::LT:
                 return $builder->expr()->field($name)->lt($value);
             case self::FL:
-                return $builder->expr()->field($name)->notEqual(NULL);
+                return $builder->expr()
+                    ->addOr($builder->expr()->field($name)->notEqual(NULL))
+                    ->addOr($builder->expr()->field($name)->notEqual($value));
             case self::NFL:
-                return $builder->expr()->field($name)->equals(NULL);
+                return $builder->expr()
+                    ->addOr($builder->expr()->field($name)->equals(NULL))
+                    ->addOr($builder->expr()->field($name)->equals($value));
             case self::LIKE:
                 return $builder->expr()->field($name)->equals(new MongoRegex(sprintf('/.*%s.*/i', preg_quote($value))));
             case self::STARTS:
