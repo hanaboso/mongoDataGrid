@@ -1586,6 +1586,12 @@ final class FilterTest extends TestCaseAbstract
                         'operation' => DocumentFilter::EQ,
                         'value'     => '9',
                     ],
+                ], [
+                    [
+                        'column'    => 'string',
+                        'operation' => DocumentFilter::EQ,
+                        'value'     => 'String 9',
+                    ],
                 ],
             ]),
         ]);

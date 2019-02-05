@@ -269,7 +269,8 @@ abstract class GridFilterAbstract
         $search   = NULL;
         $isSearch = TRUE;
         foreach ($advancedConditions as $andCondition) {
-            $expression = $builder->expr();
+            $hasExpression = FALSE;
+            $expression    = $builder->expr();
 
             foreach ($andCondition as $orCondition) {
                 if (!array_key_exists(self::COLUMN, $orCondition) ||
@@ -296,6 +297,7 @@ abstract class GridFilterAbstract
 
                 $this->checkFilterColumn($column);
                 $isSearch                 = FALSE;
+                $hasExpression            = TRUE;
                 $orCondition[self::VALUE] = $this->processDateTime($orCondition[self::VALUE]);
 
                 if (isset($this->filterColsCallbacks[$column])) {
@@ -309,7 +311,7 @@ abstract class GridFilterAbstract
                         $orCondition[self::OPERATION]
                     );
 
-                    $advancedConditionExpression->addAnd($expression);
+                    $expression->addOr($expression);
                     continue;
                 }
 
@@ -321,7 +323,9 @@ abstract class GridFilterAbstract
                 ));
             }
 
-            $advancedConditionExpression->addAnd($expression);
+            if ($hasExpression) {
+                $advancedConditionExpression->addAnd($expression);
+            }
         }
 
         if ($advancedConditions && !$isSearch) {
@@ -348,6 +352,21 @@ abstract class GridFilterAbstract
             }
 
             foreach ($this->searchableCols as $column) {
+                if (isset($this->filterColsCallbacks[$column])) {
+                    $expression = $builder->expr();
+
+                    $this->filterColsCallbacks[$column](
+                        $this->searchQuery,
+                        $search,
+                        $this->filterCols[$column],
+                        $expression,
+                        NULL
+                    );
+
+                    $searchExpression->addOr($expression);
+                    continue;
+                }
+
                 $searchExpression->addOr(self::getCondition($builder, $column, $search, self::LIKE));
             }
 
