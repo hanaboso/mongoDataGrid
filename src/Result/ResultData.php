@@ -46,7 +46,8 @@ class ResultData
                     switch (get_class($innerItem)) {
                         case MongoId::class:
                             /** @var MongoId $innerItem */
-                            $data[$key][$innerKey] = (string) $innerItem;
+                            $data[$key]['id'] = (string) $innerItem;
+                            unset($data[$key][$innerKey]);
                             break;
                         case MongoDate::class:
                             /** @var MongoDate $innerItem */
