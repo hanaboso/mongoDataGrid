@@ -13,7 +13,7 @@
         }
     },
     "require": {
-        "php": "^7.1",
+        "php": "^7.3",
         "ext-json": "*",
         "alcaeus/mongo-php-adapter": "^1.1",
         "doctrine/mongodb-odm": "^1.2"

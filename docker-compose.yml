@@ -14,8 +14,6 @@ services:
 
     mongo:
         image: mongo:latest
-        ports:
-            - ${DEV_IP}:27017:27017
         volumes:
             - mongo:/data/db
 

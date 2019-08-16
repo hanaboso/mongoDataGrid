@@ -1048,7 +1048,7 @@ final class FilterTest extends TestCaseAbstract
         try {
             (new DocumentFilter($this->dm))->getData(new GridRequestDto([self::ORDER => '+Unknown']))->toArray();
             self::assertEquals(TRUE, FALSE);
-        } catch (GridException $e) {
+        } catch (Exception $e) {
             $this->assertEquals(GridException::ORDER_COLS_ERROR, $e->getCode());
             $this->assertEquals(
                 "Column 'Unknown' cannot be used for sorting! Have you forgotten add it to 'Tests\Filter\DocumentFilter::orderCols'?",
@@ -1381,7 +1381,7 @@ final class FilterTest extends TestCaseAbstract
                 self::FILTER => '{"Unknown": ""}',
             ]))->toArray();
             self::assertEquals(TRUE, FALSE);
-        } catch (GridException $e) {
+        } catch (Exception $e) {
             $this->assertEquals(GridException::FILTER_COLS_ERROR, $e->getCode());
             $this->assertEquals(
                 "Column 'Unknown' cannot be used for filtering! Have you forgotten add it to 'Tests\Filter\DocumentFilter::filterCols'?",
@@ -1396,7 +1396,7 @@ final class FilterTest extends TestCaseAbstract
                 self::FILTER => '{"_MODIFIER_SEARCH": "Unknown"}',
             ]))->toArray();
             self::assertEquals(TRUE, FALSE);
-        } catch (GridException $e) {
+        } catch (Exception $e) {
             $this->assertEquals(GridException::SEARCHABLE_COLS_ERROR, $e->getCode());
             $this->assertEquals(
                 "Column cannot be used for searching! Have you forgotten add it to 'Tests\Filter\DocumentFilter::searchableCols'?",
@@ -1872,7 +1872,7 @@ final class FilterTest extends TestCaseAbstract
                 ]),
             ]))->toArray();
             self::assertEquals(TRUE, FALSE);
-        } catch (GridException $e) {
+        } catch (Exception $e) {
             $this->assertEquals(GridException::FILTER_COLS_ERROR, $e->getCode());
             $this->assertEquals(
                 "Column 'Unknown' cannot be used for filtering! Have you forgotten add it to 'Tests\Filter\DocumentFilter::filterCols'?",
@@ -1895,7 +1895,7 @@ final class FilterTest extends TestCaseAbstract
                 ]),
             ]))->toArray();
             self::assertEquals(TRUE, FALSE);
-        } catch (GridException $e) {
+        } catch (Exception $e) {
             $this->assertEquals(GridException::SEARCHABLE_COLS_ERROR, $e->getCode());
             $this->assertEquals(
                 "Column cannot be used for searching! Have you forgotten add it to 'Tests\Filter\DocumentFilter::searchableCols'?",

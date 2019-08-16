@@ -8,8 +8,8 @@ use Doctrine\MongoDB\Exception\ResultException;
 use Doctrine\MongoDB\Query\Expr;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\DocumentRepository;
-use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use Exception;
 use Hanaboso\MongoDataGrid\Exception\GridException;
 use Hanaboso\MongoDataGrid\Result\ResultData;
 use LogicException;
@@ -131,9 +131,7 @@ abstract class GridFilterAbstract
      * @param GridRequestDtoInterface $gridRequestDto
      *
      * @return ResultData
-     * @throws GridException
-     * @throws MongoDBException
-     * @throws MongoException
+     * @throws Exception
      */
     public function getData(GridRequestDtoInterface $gridRequestDto): ResultData
     {
@@ -204,8 +202,7 @@ abstract class GridFilterAbstract
      * @param GridRequestDtoInterface $dto
      * @param Builder                 $builder
      *
-     * @throws GridException
-     * @throws MongoException
+     * @throws Exception
      */
     private function processConditions(GridRequestDtoInterface $dto, Builder $builder): void
     {
@@ -389,6 +386,7 @@ abstract class GridFilterAbstract
      * @param mixed $value
      *
      * @return mixed
+     * @throws Exception
      */
     private function processDateTime($value)
     {
