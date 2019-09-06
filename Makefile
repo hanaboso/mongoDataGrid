@@ -4,7 +4,6 @@ IMAGE=dkr.hanaboso.net/hanaboso/mongodatagrid/
 PHP=dkr.hanaboso.net/hanaboso/symfony3-base:php-7.3
 DC=docker-compose
 DE=docker-compose exec -T php
-DM=docker-compose exec -T mariadb
 
 .env:
 	sed -e "s|{DEV_UID}|$(shell id -u)|g" \

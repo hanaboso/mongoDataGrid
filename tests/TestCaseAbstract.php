@@ -20,7 +20,7 @@ abstract class TestCaseAbstract extends TestCase
 {
 
     private const TEMP_DIR = '%s/../temp/Doctrine2.ODM';
-    private const HOSTNAME = 'mongodatagrid_mongo_1';
+    private const HOSTNAME = 'mongo';
     private const DATABASE = 'datagrid';
 
     /**
