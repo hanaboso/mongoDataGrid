@@ -1,16 +1,16 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Filter;
+namespace MongoDataGridTests\Filter;
 
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Query\Expr;
 use Hanaboso\MongoDataGrid\GridFilterAbstract;
-use Tests\Document\Document;
+use MongoDataGridTests\Document\Document;
 
 /**
  * Class DocumentFilter
  *
- * @package Tests\Filter
+ * @package MongoDataGridTests\Filter
  */
 final class DocumentFilter extends GridFilterAbstract
 {

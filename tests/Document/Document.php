@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Document;
+namespace MongoDataGridTests\Document;
 
 use DateTime;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
@@ -8,7 +8,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 /**
  * Class Document
  *
- * @package Tests\Document
+ * @package MongoDataGridTests\Document
  *
  * @ODM\Document
  * @ODM\Indexes({

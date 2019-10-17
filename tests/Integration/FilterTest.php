@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Integration;
+namespace MongoDataGridTests\Integration;
 
 use DateTime;
 use DateTimeZone;
@@ -8,20 +8,17 @@ use Exception;
 use Hanaboso\MongoDataGrid\Exception\GridException;
 use Hanaboso\MongoDataGrid\GridRequestDto;
 use LogicException;
-use Tests\Document\Document;
-use Tests\Filter\DocumentFilter;
-use Tests\PrivateTrait;
-use Tests\TestCaseAbstract;
+use MongoDataGridTests\Document\Document;
+use MongoDataGridTests\Filter\DocumentFilter;
+use MongoDataGridTests\TestCaseAbstract;
 
 /**
  * Class FilterTest
  *
- * @package Tests\Integration
+ * @package MongoDataGridTests\Integration
  */
 final class FilterTest extends TestCaseAbstract
 {
-
-    use PrivateTrait;
 
     private const DATETIME = 'Y-m-d H:i:s';
 
@@ -1051,7 +1048,7 @@ final class FilterTest extends TestCaseAbstract
         } catch (Exception $e) {
             $this->assertEquals(GridException::ORDER_COLS_ERROR, $e->getCode());
             $this->assertEquals(
-                "Column 'Unknown' cannot be used for sorting! Have you forgotten add it to 'Tests\Filter\DocumentFilter::orderCols'?",
+                "Column 'Unknown' cannot be used for sorting! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::orderCols'?",
                 $e->getMessage()
             );
         }
@@ -1384,7 +1381,7 @@ final class FilterTest extends TestCaseAbstract
         } catch (Exception $e) {
             $this->assertEquals(GridException::FILTER_COLS_ERROR, $e->getCode());
             $this->assertEquals(
-                "Column 'Unknown' cannot be used for filtering! Have you forgotten add it to 'Tests\Filter\DocumentFilter::filterCols'?",
+                "Column 'Unknown' cannot be used for filtering! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::filterCols'?",
                 $e->getMessage()
             );
         }
@@ -1399,7 +1396,7 @@ final class FilterTest extends TestCaseAbstract
         } catch (Exception $e) {
             $this->assertEquals(GridException::SEARCHABLE_COLS_ERROR, $e->getCode());
             $this->assertEquals(
-                "Column cannot be used for searching! Have you forgotten add it to 'Tests\Filter\DocumentFilter::searchableCols'?",
+                "Column cannot be used for searching! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::searchableCols'?",
                 $e->getMessage()
             );
         }
@@ -1413,7 +1410,7 @@ final class FilterTest extends TestCaseAbstract
             self::assertEquals(TRUE, FALSE);
         } catch (LogicException $e) {
             $this->assertEquals(
-                "Column cannot be used for searching! Missing TEXT index on 'Tests\Filter\DocumentFilter::searchableCols' fields!",
+                "Column cannot be used for searching! Missing TEXT index on 'MongoDataGridTests\Filter\DocumentFilter::searchableCols' fields!",
                 $e->getMessage()
             );
         }
@@ -1875,7 +1872,7 @@ final class FilterTest extends TestCaseAbstract
         } catch (Exception $e) {
             $this->assertEquals(GridException::FILTER_COLS_ERROR, $e->getCode());
             $this->assertEquals(
-                "Column 'Unknown' cannot be used for filtering! Have you forgotten add it to 'Tests\Filter\DocumentFilter::filterCols'?",
+                "Column 'Unknown' cannot be used for filtering! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::filterCols'?",
                 $e->getMessage()
             );
         }
@@ -1898,7 +1895,7 @@ final class FilterTest extends TestCaseAbstract
         } catch (Exception $e) {
             $this->assertEquals(GridException::SEARCHABLE_COLS_ERROR, $e->getCode());
             $this->assertEquals(
-                "Column cannot be used for searching! Have you forgotten add it to 'Tests\Filter\DocumentFilter::searchableCols'?",
+                "Column cannot be used for searching! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::searchableCols'?",
                 $e->getMessage()
             );
         }

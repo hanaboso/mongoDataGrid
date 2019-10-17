@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tests;
+namespace MongoDataGridTests;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\MongoDB\Connection;
@@ -8,16 +8,19 @@ use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 use Exception;
+use Hanaboso\PhpCheckUtils\PhpUnit\Traits\PrivateTrait;
+use MongoDataGridTests\Document\Document;
 use PHPUnit\Framework\TestCase;
-use Tests\Document\Document;
 
 /**
  * Class TestCaseAbstract
  *
- * @package Tests
+ * @package MongoDataGridTests
  */
 abstract class TestCaseAbstract extends TestCase
 {
+
+    use PrivateTrait;
 
     private const TEMP_DIR = '%s/../temp/Doctrine2.ODM';
     private const HOSTNAME = 'mongo';

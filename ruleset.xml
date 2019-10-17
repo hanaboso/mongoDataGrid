@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<ruleset name="MongoDataGrid">
+<ruleset name="HANABOSO_CODESTYLE">
     <rule ref="./vendor/hanaboso/php-check-utils/ruleset.xml"/>
     <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
         <properties>
-            <property name="rootNamespaces" type="array" value="src=>Hanaboso\MongoDataGrid, tests=>Tests"/>
+            <property name="rootNamespaces" type="array" value="src=>Hanaboso\MongoDataGrid, tests=>MongoDataGridTests"/>
         </properties>
     </rule>
 </ruleset>

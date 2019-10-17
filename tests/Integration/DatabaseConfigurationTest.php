@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Integration;
+namespace MongoDataGridTests\Integration;
 
-use Tests\Document\Document;
-use Tests\TestCaseAbstract;
+use MongoDataGridTests\Document\Document;
+use MongoDataGridTests\TestCaseAbstract;
 
 /**
  * Class DatabaseConfigurationTest
  *
- * @package Tests\Integration
+ * @package MongoDataGridTests\Integration
  */
 final class DatabaseConfigurationTest extends TestCaseAbstract
 {
