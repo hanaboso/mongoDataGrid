@@ -151,10 +151,12 @@ abstract class GridFilterAbstract
             $gridRequestDto->setTotal($this->countQuery->count()->getQuery()->execute());
         } catch (ResultException $e) {
             if ($e->getCode() === 27) {
-                throw new LogicException(sprintf(
-                    "Column cannot be used for searching! Missing TEXT index on '%s::searchableCols' fields!",
-                    static::class
-                ));
+                throw new LogicException(
+                    sprintf(
+                        "Column cannot be used for searching! Missing TEXT index on '%s::searchableCols' fields!",
+                        static::class
+                    )
+                );
             }
 
             throw $e;
@@ -242,17 +244,17 @@ abstract class GridFilterAbstract
 
             if (is_null($value)) {
                 $conditionExpression->addAnd($builder->expr()->field($column)->equals(NULL));
-            } elseif ($value === self::FILER_VAL_NOT_NULL) {
+            } else if ($value === self::FILER_VAL_NOT_NULL) {
                 $conditionExpression->addAnd($builder->expr()->field($column)->notEqual(NULL));
-            } elseif (is_array($value)) {
+            } else if (is_array($value)) {
                 $conditionExpression->addAnd($builder->expr()->field($column)->in($value));
-            } elseif (preg_match('/^([^\s]+)>=$/', $column, $columnMatches)) {
+            } else if (preg_match('/^([^\s]+)>=$/', $column, $columnMatches)) {
                 $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->gte($value));
-            } elseif (preg_match('/^([^\s]+)>$/', $column, $columnMatches)) {
+            } else if (preg_match('/^([^\s]+)>$/', $column, $columnMatches)) {
                 $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->gt($value));
-            } elseif (preg_match('/^([^\s]+)<=$/', $column, $columnMatches)) {
+            } else if (preg_match('/^([^\s]+)<=$/', $column, $columnMatches)) {
                 $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->lte($value));
-            } elseif (preg_match('/^([^\s]+)<$/', $column, $columnMatches)) {
+            } else if (preg_match('/^([^\s]+)<$/', $column, $columnMatches)) {
                 $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->lt($value));
             } else {
                 $conditionExpression->addAnd($builder->expr()->field($column)->equals($value));
@@ -274,12 +276,14 @@ abstract class GridFilterAbstract
                     !array_key_exists(self::OPERATION, $orCondition) ||
                     !array_key_exists(self::VALUE, $orCondition) &&
                     !in_array($orCondition[self::OPERATION], [self::FL, self::NFL], TRUE)) {
-                    throw new LogicException(sprintf(
-                        "Advanced filter must have '%s', '%s' and '%s' field!",
-                        self::COLUMN,
-                        self::OPERATION,
-                        self::VALUE
-                    ));
+                    throw new LogicException(
+                        sprintf(
+                            "Advanced filter must have '%s', '%s' and '%s' field!",
+                            self::COLUMN,
+                            self::OPERATION,
+                            self::VALUE
+                        )
+                    );
                 }
 
                 if (!array_key_exists(self::VALUE, $orCondition)) {
@@ -312,12 +316,14 @@ abstract class GridFilterAbstract
                     continue;
                 }
 
-                $expression->addOr(self::getCondition(
-                    $builder,
-                    $this->filterCols[$column],
-                    $orCondition[self::VALUE],
-                    $orCondition[self::OPERATION]
-                ));
+                $expression->addOr(
+                    self::getCondition(
+                        $builder,
+                        $this->filterCols[$column],
+                        $orCondition[self::VALUE],
+                        $orCondition[self::OPERATION]
+                    )
+                );
             }
 
             if ($hasExpression) {
