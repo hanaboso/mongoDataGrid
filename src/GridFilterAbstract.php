@@ -3,18 +3,16 @@
 namespace Hanaboso\MongoDataGrid;
 
 use DateTime;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\MongoDB\Exception\ResultException;
-use Doctrine\MongoDB\Query\Expr;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use Doctrine\ODM\MongoDB\Query\Expr;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Exception;
 use Hanaboso\MongoDataGrid\Exception\GridException;
 use Hanaboso\MongoDataGrid\Result\ResultData;
 use LogicException;
-use MongoException;
-use MongoRegex;
+use MongoDB\BSON\Regex;
+use MongoDB\Driver\Exception\CommandException;
 
 /**
  * Class GridFilterAbstract
@@ -55,62 +53,47 @@ abstract class GridFilterAbstract
     /**
      * @var DocumentManager
      */
-    protected $dm;
+    protected DocumentManager $dm;
 
     /**
      * @var string
      */
-    protected $document;
-
-    /**
-     * @var Builder
-     */
-    protected $searchQuery;
+    protected string $document;
 
     /**
      * @var Builder|NULL
      */
-    protected $countQuery = NULL;
-
-    /**
-     * @var array
-     */
-    protected $filters;
-
-    /**
-     * @var string
-     */
-    protected $order;
-
-    /**
-     * @var string
-     */
-    protected $search;
+    private ?Builder $countQuery;
 
     /**
      * @var bool
      */
-    protected $useTextSearch = FALSE;
+    private bool $useTextSearch;
 
     /**
      * @var array
      */
-    protected $filterCols = [];
+    private array $orderCols;
+
+    /**
+     * @var Builder
+     */
+    private Builder $searchQuery;
 
     /**
      * @var array
      */
-    protected $orderCols = [];
+    private array $searchableCols;
 
     /**
      * @var array
      */
-    protected $searchableCols = [];
+    private array $filterCols;
 
     /**
      * @var array
      */
-    protected $filterColsCallbacks = [];
+    private array $filterColsCallbacks;
 
     /**
      * GridFilterAbstract constructor.
@@ -121,9 +104,15 @@ abstract class GridFilterAbstract
     {
         $this->dm = $dm;
         $this->setDocument();
-        $this->configFilterColsCallbacks();
-        $this->configCustomCountQuery();
-        $this->prepareSearchQuery();
+
+        $this->countQuery          = $this->configCustomCountQuery();
+        $this->filterCols          = $this->filterCols();
+        $this->filterColsCallbacks = $this->configFilterColsCallbacks();
+        $this->orderCols           = $this->orderCols();
+        $this->searchableCols      = $this->searchableCols();
+        $this->searchQuery         = $this->prepareSearchQuery();
+        $this->useTextSearch       = $this->useTextSearch();
+
         $this->searchQuery->hydrate(FALSE);
     }
 
@@ -148,8 +137,10 @@ abstract class GridFilterAbstract
 
         try {
             $data = new ResultData($this->searchQuery->getQuery());
-            $gridRequestDto->setTotal($this->countQuery->count()->getQuery()->execute());
-        } catch (ResultException $e) {
+            /** @var int $total */
+            $total = $this->countQuery->count()->getQuery()->execute();
+            $gridRequestDto->setTotal($total);
+        } catch (CommandException $e) {
             if ($e->getCode() === 27) {
                 throw new LogicException(
                     sprintf(
@@ -166,11 +157,14 @@ abstract class GridFilterAbstract
     }
 
     /**
-     * @return DocumentRepository|ObjectRepository
+     * @return DocumentRepository
      */
-    public function getRepository(): ObjectRepository
+    public function getRepository(): DocumentRepository
     {
-        return $this->dm->getRepository($this->document);
+        /** @var DocumentRepository $repo */
+        $repo = $this->dm->getRepository($this->document);
+
+        return $repo;
     }
 
     /**
@@ -425,12 +419,32 @@ abstract class GridFilterAbstract
     /**
      *
      */
-    abstract protected function prepareSearchQuery(): void;
+    abstract protected function prepareSearchQuery(): Builder;
 
     /**
      *
      */
     abstract protected function setDocument(): void;
+
+    /**
+     * @return array
+     */
+    abstract protected function filterCols(): array;
+
+    /**
+     * @return array
+     */
+    abstract protected function orderCols(): array;
+
+    /**
+     * @return array
+     */
+    abstract protected function searchableCols(): array;
+
+    /**
+     * @return bool
+     */
+    abstract protected function useTextSearch(): bool;
 
     /**
      * -------------------------------------------- HELPERS -----------------------------------------------
@@ -439,23 +453,22 @@ abstract class GridFilterAbstract
     /**
      * In child can configure GridFilterAbstract::filterColsCallbacks
      * example child content
-     * $this->filterColsCallbacks[ESomeEnumCols::CREATED_AT_FROM] = [$object,'applyCreatedAtFrom']
      *
-     * function applySomeFilter(QueryBuilder $qb,$filterVal,$colName){}
+     * return [ESomeEnumCols::CREATED_AT_FROM => function (Builder $builder,string $value,string $name,Expr $expr,?string $operator){}]
      */
-    protected function configFilterColsCallbacks(): void
+    protected function configFilterColsCallbacks(): array
     {
-
+        return [];
     }
 
     /**
      * In child can configure GridFilterAbstract::configCustomCountQuery
      * example child content
-     * $this->countQuery = $this->getRepository()->createQueryBuilder('c')->select('count(c.id)')
+     * return $this->getRepository()->createQueryBuilder('c')->select('count(c.id)')
      */
-    protected function configCustomCountQuery(): void
+    protected function configCustomCountQuery(): ?Builder
     {
-
+        return NULL;
     }
 
     /**
@@ -465,7 +478,6 @@ abstract class GridFilterAbstract
      * @param string|NULL $operator
      *
      * @return Expr
-     * @throws MongoException
      */
     public static function getCondition(Builder $builder, string $name, $value, ?string $operator = NULL): Expr
     {
@@ -495,11 +507,11 @@ abstract class GridFilterAbstract
                     ->addOr($builder->expr()->field($name)->equals(NULL))
                     ->addOr($builder->expr()->field($name)->equals($value));
             case self::LIKE:
-                return $builder->expr()->field($name)->equals(new MongoRegex(sprintf('/.*%s.*/i', preg_quote($value))));
+                return $builder->expr()->field($name)->equals(new Regex(sprintf('%s', preg_quote($value)), 'i'));
             case self::STARTS:
-                return $builder->expr()->field($name)->equals(new MongoRegex(sprintf('/^%s.*/i', preg_quote($value))));
+                return $builder->expr()->field($name)->equals(new Regex(sprintf('^%s', preg_quote($value)), 'i'));
             case self::ENDS:
-                return $builder->expr()->field($name)->equals(new MongoRegex(sprintf('/.*%s$/i', preg_quote($value))));
+                return $builder->expr()->field($name)->equals(new Regex(sprintf('%s$', preg_quote($value)), 'i'));
             case self::BETWEEN:
                 if (is_array($value) && count($value) >= 2) {
                     return $builder->expr()

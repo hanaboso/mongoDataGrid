@@ -16,80 +16,92 @@ final class DocumentFilter extends GridFilterAbstract
 {
 
     /**
-     * @var string[]
+     * @return array
      */
-    protected $filterCols = [
-        'id'            => '_id',
-        'string'        => 'string',
-        'int'           => 'int',
-        'float'         => 'float',
-        'bool'          => 'bool',
-        'date'          => 'date',
-        'int_gte'       => 'int>=',
-        'int_gt'        => 'int>',
-        'int_lt'        => 'int<',
-        'int_lte'       => 'int<=',
-        'custom_string' => 'string',
-    ];
-
-    /**
-     * @var string[]
-     */
-    protected $orderCols = [
-        'id'     => '_id',
-        'string' => 'string',
-        'int'    => 'int',
-        'float'  => 'float',
-        'bool'   => 'bool',
-        'date'   => 'date',
-    ];
-
-    /**
-     * @var string[]
-     */
-    protected $searchableCols = [
-        'string',
-        'int',
-        'float',
-    ];
-
-    /**
-     * @var bool
-     */
-    protected $useTextSearch = TRUE;
-
-    /**
-     *
-     */
-    protected function prepareSearchQuery(): void
+    protected function filterCols(): array
     {
-        $this->searchQuery = $this
+        return [
+            'id'            => '_id',
+            'string'        => 'string',
+            'int'           => 'int',
+            'float'         => 'float',
+            'bool'          => 'bool',
+            'date'          => 'date',
+            'int_gte'       => 'int>=',
+            'int_gt'        => 'int>',
+            'int_lt'        => 'int<',
+            'int_lte'       => 'int<=',
+            'custom_string' => 'string',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function orderCols(): array
+    {
+        return [
+            'id'     => '_id',
+            'string' => 'string',
+            'int'    => 'int',
+            'float'  => 'float',
+            'bool'   => 'bool',
+            'date'   => 'date',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function searchableCols(): array
+    {
+        return [
+            'string',
+            'int',
+            'float',
+        ];
+    }
+
+    /**
+     * @return bool
+     */
+    protected function useTextSearch(): bool
+    {
+        return TRUE;
+    }
+
+    /**
+     * @return Builder
+     */
+    protected function prepareSearchQuery(): Builder
+    {
+        return $this
             ->getRepository()
             ->createQueryBuilder()
             ->select('_id', 'string', 'int', 'float', 'bool', 'date');
     }
 
     /**
-     *
+     * @return Builder|null
      */
-    protected function configCustomCountQuery(): void
+    protected function configCustomCountQuery(): ?Builder
     {
         parent::configCustomCountQuery();
 
-        $this->countQuery = $this
+        return $this
             ->getRepository()
             ->createQueryBuilder()
             ->select(['_id']);
     }
 
     /**
-     *
+     * @return array
      */
-    protected function configFilterColsCallbacks(): void
+    protected function configFilterColsCallbacks(): array
     {
         parent::configFilterColsCallbacks();
 
-        $this->filterColsCallbacks = [
+        return [
             'custom_string' => function (
                 Builder $builder,
                 string $value,

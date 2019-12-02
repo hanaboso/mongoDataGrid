@@ -2,10 +2,11 @@
 
 namespace Hanaboso\MongoDataGrid\Result;
 
+use Doctrine\ODM\MongoDB\Iterator\Iterator;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\Query\Query;
-use MongoDate;
-use MongoId;
+use MongoDB\BSON\ObjectId;
+use MongoDB\BSON\UTCDateTime;
 
 /**
  * Class ResultData
@@ -20,7 +21,7 @@ class ResultData
     /**
      * @var Query
      */
-    private $query;
+    private Query $query;
 
     /**
      * ResultData constructor.
@@ -38,19 +39,21 @@ class ResultData
      */
     public function toArray(): array
     {
-        $data = $this->query->execute()->toArray();
+        /** @var Iterator $data */
+        $data = $this->query->execute();
+        $data = $data->toArray();
 
         foreach ($data as $key => $item) {
             foreach ($item as $innerKey => $innerItem) {
                 if (is_object($innerItem)) {
                     switch (get_class($innerItem)) {
-                        case MongoId::class:
-                            /** @var MongoId $innerItem */
+                        case ObjectId::class:
+                            /** @var ObjectId $innerItem */
                             $data[$key]['id'] = (string) $innerItem;
                             unset($data[$key][$innerKey]);
                             break;
-                        case MongoDate::class:
-                            /** @var MongoDate $innerItem */
+                        case UTCDateTime::class:
+                            /** @var UTCDateTime $innerItem */
                             $data[$key][$innerKey] = $innerItem->toDateTime()->format(self::DATETIME);
                             break;
                         default:

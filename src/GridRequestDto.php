@@ -24,22 +24,22 @@ class GridRequestDto implements GridRequestDtoInterface
     /**
      * @var array
      */
-    private $headers;
+    private array $headers;
 
     /**
      * @var int
      */
-    private $total = 0;
+    private int $total;
 
     /**
      * @var array
      */
-    private $filter = [];
+    private array $filter;
 
     /**
      * @var int
      */
-    private $limit = 0;
+    private int $limit;
 
     /**
      * GridRequestDto constructor.
@@ -48,7 +48,10 @@ class GridRequestDto implements GridRequestDtoInterface
      */
     public function __construct(array $headers)
     {
+        $this->filter  = [];
         $this->headers = array_change_key_case($headers, CASE_LOWER);
+        $this->limit   = 0;
+        $this->total   = 0;
     }
 
     /**

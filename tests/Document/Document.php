@@ -30,35 +30,47 @@ final class Document
      *
      * @ODM\Field(type="string")
      */
-    private $string;
+    private string $string;
 
     /**
      * @var integer
      *
      * @ODM\Field(type="int")
      */
-    private $int;
+    private int $int;
 
     /**
      * @var float
      *
      * @ODM\Field(type="float")
      */
-    private $float;
+    private float $float;
 
     /**
      * @var bool
      *
      * @ODM\Field(type="bool")
      */
-    private $bool;
+    private bool $bool;
 
     /**
      * @var DateTime
      *
      * @ODM\Field(type="date")
      */
-    private $date;
+    private DateTime $date;
+
+    /**
+     * Document constructor.
+     */
+    public function __construct()
+    {
+        $this->int    = 0;
+        $this->float  = 0.0;
+        $this->bool   = TRUE;
+        $this->string = '';
+        $this->date   = new DateTime();
+    }
 
     /**
      * @return string

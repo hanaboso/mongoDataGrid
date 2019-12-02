@@ -11,6 +11,7 @@ use LogicException;
 use MongoDataGridTests\Document\Document;
 use MongoDataGridTests\Filter\DocumentFilter;
 use MongoDataGridTests\TestCaseAbstract;
+use Throwable;
 
 /**
  * Class FilterTest
@@ -31,7 +32,7 @@ final class FilterTest extends TestCaseAbstract
     /**
      * @var DateTime
      */
-    private $today;
+    private DateTime $today;
 
     /**
      * @throws Exception
@@ -1562,7 +1563,7 @@ final class FilterTest extends TestCaseAbstract
                 )
             )->toArray();
             self::assertEquals(TRUE, FALSE);
-        } catch (LogicException $e) {
+        } catch (Throwable $e) {
             $this->assertEquals(
                 "Column cannot be used for searching! Missing TEXT index on 'MongoDataGridTests\Filter\DocumentFilter::searchableCols' fields!",
                 $e->getMessage()
@@ -2523,6 +2524,7 @@ final class FilterTest extends TestCaseAbstract
         );
 
         $document = (new DocumentFilter($this->dm));
+
         $this->setProperty($document, 'countQuery', NULL);
         $dto    = new GridRequestDto([self::ORDER => '+id', self::PAGE => '3', self::LIMIT => '2']);
         $result = $document->getData($dto)->toArray();
