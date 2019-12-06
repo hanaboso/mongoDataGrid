@@ -16,7 +16,7 @@ final class DocumentFilter extends GridFilterAbstract
 {
 
     /**
-     * @return array
+     * @return mixed[]
      */
     protected function filterCols(): array
     {
@@ -36,7 +36,7 @@ final class DocumentFilter extends GridFilterAbstract
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     protected function orderCols(): array
     {
@@ -51,7 +51,7 @@ final class DocumentFilter extends GridFilterAbstract
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     protected function searchableCols(): array
     {
@@ -95,7 +95,7 @@ final class DocumentFilter extends GridFilterAbstract
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     protected function configFilterColsCallbacks(): array
     {

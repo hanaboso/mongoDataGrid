@@ -11,12 +11,12 @@ interface GridRequestDtoInterface
 {
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getFilter(): array;
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getAdvancedFilter(): array;
 
@@ -31,7 +31,7 @@ interface GridRequestDtoInterface
     public function getLimit(): int;
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getOrderBy(): array;
 

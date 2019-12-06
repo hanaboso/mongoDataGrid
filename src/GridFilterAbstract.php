@@ -71,7 +71,7 @@ abstract class GridFilterAbstract
     private bool $useTextSearch;
 
     /**
-     * @var array
+     * @var mixed[]
      */
     private array $orderCols;
 
@@ -81,17 +81,17 @@ abstract class GridFilterAbstract
     private Builder $searchQuery;
 
     /**
-     * @var array
+     * @var mixed[]
      */
     private array $searchableCols;
 
     /**
-     * @var array
+     * @var mixed[]
      */
     private array $filterCols;
 
     /**
-     * @var array
+     * @var mixed[]
      */
     private array $filterColsCallbacks;
 
@@ -427,17 +427,17 @@ abstract class GridFilterAbstract
     abstract protected function setDocument(): void;
 
     /**
-     * @return array
+     * @return mixed[]
      */
     abstract protected function filterCols(): array;
 
     /**
-     * @return array
+     * @return mixed[]
      */
     abstract protected function orderCols(): array;
 
     /**
-     * @return array
+     * @return mixed[]
      */
     abstract protected function searchableCols(): array;
 
@@ -455,6 +455,8 @@ abstract class GridFilterAbstract
      * example child content
      *
      * return [ESomeEnumCols::CREATED_AT_FROM => function (Builder $builder,string $value,string $name,Expr $expr,?string $operator){}]
+     *
+     * @return mixed[]
      */
     protected function configFilterColsCallbacks(): array
     {

@@ -43,6 +43,12 @@ phpstan:
 phpintegration:
 	$(DE) ./vendor/bin/phpunit -c ./vendor/hanaboso/php-check-utils/phpunit.xml.dist --colors --stderr tests/Integration
 
+phpcoverage:
+	$(DE) php vendor/bin/paratest -c ./vendor/hanaboso/php-check-utils/phpunit.xml.dist -p 4 --coverage-html var/coverage --whitelist src tests
+
+phpcoverage-ci:
+	$(DE) ./vendor/hanaboso/php-check-utils/bin/coverage.sh 90
+
 test: docker-up-force composer-install fasttest
 
-fasttest: clear-cache codesniffer phpstan phpintegration
+fasttest: clear-cache codesniffer phpstan phpintegration phpcoverage-ci

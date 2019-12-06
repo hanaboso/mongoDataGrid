@@ -19,14 +19,14 @@ class ResultData
     private const DATETIME = 'Y-m-d H:i:s';
 
     /**
-     * @var Query
+     * @var Query<mixed>
      */
     private Query $query;
 
     /**
      * ResultData constructor.
      *
-     * @param Query $query
+     * @param Query<mixed> $query
      */
     public function __construct(Query $query)
     {
@@ -34,12 +34,12 @@ class ResultData
     }
 
     /**
-     * @return array
+     * @return mixed[]
      * @throws MongoDBException
      */
     public function toArray(): array
     {
-        /** @var Iterator $data */
+        /** @var Iterator<mixed> $data */
         $data = $this->query->execute();
         $data = $data->toArray();
 

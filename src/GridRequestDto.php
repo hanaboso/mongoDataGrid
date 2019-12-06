@@ -22,7 +22,7 @@ class GridRequestDto implements GridRequestDtoInterface
     private const DEFAULT_LIMIT   = 10;
 
     /**
-     * @var array
+     * @var mixed[]
      */
     private array $headers;
 
@@ -32,7 +32,7 @@ class GridRequestDto implements GridRequestDtoInterface
     private int $total;
 
     /**
-     * @var array
+     * @var mixed[]
      */
     private array $filter;
 
@@ -44,7 +44,7 @@ class GridRequestDto implements GridRequestDtoInterface
     /**
      * GridRequestDto constructor.
      *
-     * @param array $headers
+     * @param mixed[] $headers
      */
     public function __construct(array $headers)
     {
@@ -55,7 +55,7 @@ class GridRequestDto implements GridRequestDtoInterface
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getFilter(): array
     {
@@ -73,7 +73,7 @@ class GridRequestDto implements GridRequestDtoInterface
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getAdvancedFilter(): array
     {
@@ -95,7 +95,7 @@ class GridRequestDto implements GridRequestDtoInterface
     }
 
     /**
-     * @param array $filter
+     * @param mixed[] $filter
      *
      * @return GridRequestDto
      */
@@ -159,7 +159,7 @@ class GridRequestDto implements GridRequestDtoInterface
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getOrderBy(): array
     {
@@ -202,7 +202,7 @@ class GridRequestDto implements GridRequestDtoInterface
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getParamsForHeader(): array
     {
@@ -216,9 +216,9 @@ class GridRequestDto implements GridRequestDtoInterface
     }
 
     /**
-     * @param array $data
+     * @param mixed[] $data
      *
-     * @return array
+     * @return mixed[]
      */
     protected function formatFilterForHeader(array $data): array
     {
