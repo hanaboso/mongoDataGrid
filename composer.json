@@ -1,6 +1,7 @@
 {
     "name": "hanaboso/mongo-data-grid",
     "license": "proprietary",
+    "version": "1.4.0",
     "description": "MongoDataGrid",
     "autoload": {
         "psr-4": {
@@ -16,9 +17,10 @@
         "php": "^7.4",
         "ext-json": "*",
         "ext-mongodb": "*",
-        "doctrine/mongodb-odm": "^2.0"
+        "doctrine/mongodb-odm": "^2.0",
+        "hanaboso/utils": "^1.0"
     },
     "require-dev": {
-        "hanaboso/php-check-utils": "^1.0"
+        "hanaboso/php-check-utils": "^1.1"
     }
 }

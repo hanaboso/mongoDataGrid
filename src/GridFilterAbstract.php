@@ -22,16 +22,6 @@ use MongoDB\Driver\Exception\CommandException;
 abstract class GridFilterAbstract
 {
 
-    /**
-     * key in array filter for fulltext search
-     */
-    public const FILTER_SEARCH_KEY = '_MODIFIER_SEARCH';
-
-    /**
-     * Value for filter when filter creates where `dbCol` IS NOT NULL
-     */
-    public const FILER_VAL_NOT_NULL = '_MODIFIER_VAL_NOT_NULL';
-
     public const EQ       = 'EQ';
     public const NEQ      = 'NEQ';
     public const GT       = 'GT';
@@ -41,14 +31,19 @@ abstract class GridFilterAbstract
     public const LIKE     = 'LIKE';
     public const STARTS   = 'STARTS';
     public const ENDS     = 'ENDS';
-    public const FL       = 'FL';
-    public const NFL      = 'NFL';
+    public const NEMPTY   = 'NEMPTY';
+    public const EMPTY    = 'EMPTY';
     public const BETWEEN  = 'BETWEEN';
     public const NBETWEEN = 'NBETWEEN';
 
+    public const ASCENDING  = 'ASC';
+    public const DESCENDING = 'DESC';
+
     public const COLUMN    = 'column';
-    public const OPERATION = 'operation';
+    public const OPERATOR  = 'operator';
     public const VALUE     = 'value';
+    public const DIRECTION = 'direction';
+    public const SEARCH    = 'search';
 
     /**
      * @var DocumentManager
@@ -57,6 +52,7 @@ abstract class GridFilterAbstract
 
     /**
      * @var string
+     * @phpstan-var class-string
      */
     protected string $document;
 
@@ -137,8 +133,10 @@ abstract class GridFilterAbstract
 
         try {
             $data = new ResultData($this->searchQuery->getQuery());
+            /** @var Builder $countQuery */
+            $countQuery = $this->countQuery;
             /** @var int $total */
-            $total = $this->countQuery->count()->getQuery()->execute();
+            $total = $countQuery->count()->getQuery()->execute();
             $gridRequestDto->setTotal($total);
         } catch (CommandException $e) {
             if ($e->getCode() === 27) {
@@ -157,11 +155,11 @@ abstract class GridFilterAbstract
     }
 
     /**
-     * @return DocumentRepository
+     * @return DocumentRepository<mixed>
      */
     public function getRepository(): DocumentRepository
     {
-        /** @var DocumentRepository $repo */
+        /** @var DocumentRepository<mixed> $repo */
         $repo = $this->dm->getRepository($this->document);
 
         return $repo;
@@ -177,20 +175,22 @@ abstract class GridFilterAbstract
         $sortations = $dto->getOrderBy();
 
         if ($sortations) {
-            [$columns, $direction] = $sortations;
+            foreach ($sortations as $sortation) {
+                $column    = $sortation[self::COLUMN];
+                $direction = $sortation[self::DIRECTION];
+                if (!isset($this->orderCols[$column])) {
+                    throw new GridException(
+                        sprintf(
+                            "Column '%s' cannot be used for sorting! Have you forgotten add it to '%s::orderCols'?",
+                            $column,
+                            static::class
+                        ),
+                        GridException::SORT_COLS_ERROR
+                    );
+                }
 
-            if (!isset($this->orderCols[$columns])) {
-                throw new GridException(
-                    sprintf(
-                        "Column '%s' cannot be used for sorting! Have you forgotten add it to '%s::orderCols'?",
-                        $columns,
-                        static::class
-                    ),
-                    GridException::ORDER_COLS_ERROR
-                );
+                $this->searchQuery->sort($this->orderCols[$column], $direction);
             }
-
-            $this->searchQuery->sort($this->orderCols[$columns], $direction);
         }
     }
 
@@ -203,78 +203,23 @@ abstract class GridFilterAbstract
     private function processConditions(GridRequestDtoInterface $dto, Builder $builder): void
     {
         $conditions                  = $dto->getFilter();
-        $advancedConditions          = $dto->getAdvancedFilter();
-        $conditionExpression         = $builder->expr();
         $advancedConditionExpression = $builder->expr();
 
-        /**
-         * @var string $column
-         * @var mixed  $value
-         */
-        foreach ($conditions as $column => $value) {
-            if ($column === self::FILTER_SEARCH_KEY) {
-                continue;
-            }
-
-            $this->checkFilterColumn($column);
-
-            if (isset($this->filterColsCallbacks[$column])) {
-                $expression = $builder->expr();
-
-                $this->filterColsCallbacks[$column](
-                    $this->searchQuery,
-                    $value,
-                    $this->filterCols[$column],
-                    $expression,
-                    NULL
-                );
-
-                $conditionExpression->addAnd($expression);
-                continue;
-            }
-
-            $value  = $this->processDateTime($value);
-            $column = $this->filterCols[$column];
-
-            if (is_null($value)) {
-                $conditionExpression->addAnd($builder->expr()->field($column)->equals(NULL));
-            } else if ($value === self::FILER_VAL_NOT_NULL) {
-                $conditionExpression->addAnd($builder->expr()->field($column)->notEqual(NULL));
-            } else if (is_array($value)) {
-                $conditionExpression->addAnd($builder->expr()->field($column)->in($value));
-            } else if (preg_match('/^([^\s]+)>=$/', $column, $columnMatches)) {
-                $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->gte($value));
-            } else if (preg_match('/^([^\s]+)>$/', $column, $columnMatches)) {
-                $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->gt($value));
-            } else if (preg_match('/^([^\s]+)<=$/', $column, $columnMatches)) {
-                $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->lte($value));
-            } else if (preg_match('/^([^\s]+)<$/', $column, $columnMatches)) {
-                $conditionExpression->addAnd($builder->expr()->field($columnMatches[1])->lt($value));
-            } else {
-                $conditionExpression->addAnd($builder->expr()->field($column)->equals($value));
-            }
-        }
-
-        if ($conditions && (count($conditions) !== 1 || !isset($conditions[self::FILTER_SEARCH_KEY]))) {
-            $builder->addAnd($conditionExpression);
-        }
-
-        $search   = NULL;
-        $isSearch = TRUE;
-        foreach ($advancedConditions as $andCondition) {
+        $exp = FALSE;
+        foreach ($conditions as $andCondition) {
             $hasExpression = FALSE;
             $expression    = $builder->expr();
 
             foreach ($andCondition as $orCondition) {
                 if (!array_key_exists(self::COLUMN, $orCondition) ||
-                    !array_key_exists(self::OPERATION, $orCondition) ||
+                    !array_key_exists(self::OPERATOR, $orCondition) ||
                     !array_key_exists(self::VALUE, $orCondition) &&
-                    !in_array($orCondition[self::OPERATION], [self::FL, self::NFL], TRUE)) {
+                    !in_array($orCondition[self::OPERATOR], [self::EMPTY, self::NEMPTY], TRUE)) {
                     throw new LogicException(
                         sprintf(
                             "Advanced filter must have '%s', '%s' and '%s' field!",
                             self::COLUMN,
-                            self::OPERATION,
+                            self::OPERATOR,
                             self::VALUE
                         )
                     );
@@ -285,13 +230,8 @@ abstract class GridFilterAbstract
                 }
 
                 $column = $orCondition[self::COLUMN];
-                if ($column === self::FILTER_SEARCH_KEY) {
-                    $search = $orCondition[self::VALUE];
-                    continue;
-                }
 
                 $this->checkFilterColumn($column);
-                $isSearch                 = FALSE;
                 $hasExpression            = TRUE;
                 $orCondition[self::VALUE] = $this->processDateTime($orCondition[self::VALUE]);
 
@@ -303,10 +243,10 @@ abstract class GridFilterAbstract
                         $orCondition[self::VALUE],
                         $this->filterCols[$column],
                         $expression,
-                        $orCondition[self::OPERATION]
+                        $orCondition[self::OPERATOR]
                     );
-
                     $expression->addOr($expression);
+
                     continue;
                 }
 
@@ -315,21 +255,22 @@ abstract class GridFilterAbstract
                         $builder,
                         $this->filterCols[$column],
                         $orCondition[self::VALUE],
-                        $orCondition[self::OPERATION]
+                        $orCondition[self::OPERATOR]
                     )
                 );
             }
 
             if ($hasExpression) {
                 $advancedConditionExpression->addAnd($expression);
+                $exp = TRUE;
             }
         }
 
-        if ($advancedConditions && !$isSearch) {
+        if ($exp) {
             $builder->addAnd($advancedConditionExpression);
         }
 
-        $search = $conditions[self::FILTER_SEARCH_KEY] ?? $search ?? '';
+        $search = $dto->getSearch();
 
         if ($search) {
             if ($this->useTextSearch) {
@@ -349,6 +290,17 @@ abstract class GridFilterAbstract
             }
 
             foreach ($this->searchableCols as $column) {
+                if (!array_key_exists($column, $this->filterCols)) {
+                    throw new GridException(
+                        sprintf(
+                            "Column '%s' cannot be used for searching! Have you forgotten add it to '%s::filterCols'?",
+                            $column,
+                            static::class
+                        ),
+                        GridException::SEARCHABLE_COLS_ERROR
+                    );
+                }
+
                 if (isset($this->filterColsCallbacks[$column])) {
                     $expression = $builder->expr();
 
@@ -361,6 +313,7 @@ abstract class GridFilterAbstract
                     );
 
                     $searchExpression->addOr($expression);
+
                     continue;
                 }
 
@@ -377,7 +330,7 @@ abstract class GridFilterAbstract
     private function processPagination(GridRequestDtoInterface $dto): void
     {
         $page  = $dto->getPage();
-        $limit = $dto->getLimit();
+        $limit = $dto->getItemsPerPage();
 
         $this->searchQuery->skip(--$page * $limit)->limit($limit);
     }
@@ -390,8 +343,13 @@ abstract class GridFilterAbstract
      */
     private function processDateTime($value)
     {
-        if (is_string($value) && preg_match('/\d{4}-\d{2}-\d{2}.\d{2}:\d{2}:\d{2}/', $value)) {
-            return new DateTime($value);
+        $inner = $value;
+        if (is_array($value)) {
+            $inner = $value[0];
+        }
+
+        if (is_string($inner) && preg_match('/\d{4}-\d{2}-\d{2}.\d{2}:\d{2}:\d{2}/', $inner)) {
+            return new DateTime($inner);
         }
 
         return $value;
@@ -493,21 +451,21 @@ abstract class GridFilterAbstract
                     $builder->expr()->field($name)->notIn($value) :
                     $builder->expr()->field($name)->notEqual($value);
             case self::GTE:
-                return $builder->expr()->field($name)->gte($value);
+                return $builder->expr()->field($name)->gte(self::getValue($value));
             case self::GT:
-                return $builder->expr()->field($name)->gt($value);
+                return $builder->expr()->field($name)->gt(self::getValue($value));
             case self::LTE:
-                return $builder->expr()->field($name)->lte($value);
+                return $builder->expr()->field($name)->lte(self::getValue($value));
             case self::LT:
-                return $builder->expr()->field($name)->lt($value);
-            case self::FL:
+                return $builder->expr()->field($name)->lt(self::getValue($value));
+            case self::NEMPTY:
                 return $builder->expr()
                     ->addOr($builder->expr()->field($name)->notEqual(NULL))
-                    ->addOr($builder->expr()->field($name)->notEqual($value));
-            case self::NFL:
+                    ->addOr($builder->expr()->field($name)->notEqual(self::getValue($value)));
+            case self::EMPTY:
                 return $builder->expr()
                     ->addOr($builder->expr()->field($name)->equals(NULL))
-                    ->addOr($builder->expr()->field($name)->equals($value));
+                    ->addOr($builder->expr()->field($name)->equals(self::getValue($value)));
             case self::LIKE:
                 return $builder->expr()->field($name)->equals(new Regex(sprintf('%s', preg_quote($value)), 'i'));
             case self::STARTS:
@@ -521,7 +479,7 @@ abstract class GridFilterAbstract
                         ->addAnd($builder->expr()->field($name)->lte($value[1]));
                 }
 
-                return $builder->expr()->field($name)->equals($value);
+                return $builder->expr()->field($name)->equals(self::getValue($value));
             case self::NBETWEEN:
                 if (is_array($value) && count($value) >= 2) {
                     return $builder->expr()
@@ -529,10 +487,20 @@ abstract class GridFilterAbstract
                         ->addOr($builder->expr()->field($name)->gte($value[1]));
                 }
 
-                return $builder->expr()->field($name)->notEqual($value);
+                return $builder->expr()->field($name)->notEqual(self::getValue($value));
             default:
-                return $builder->expr()->field($name)->equals($value);
+                return $builder->expr()->field($name)->equals(self::getValue($value));
         }
+    }
+
+    /**
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    private static function getValue($value)
+    {
+        return is_array($value) ? $value[0] : $value;
     }
 
 }

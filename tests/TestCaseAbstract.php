@@ -22,10 +22,10 @@ abstract class TestCaseAbstract extends TestCase
 
     use PrivateTrait;
 
-    private const TEMP_DIR = '%s/../temp/Doctrine2.ODM';
-    private const HOSTNAME = 'mongodb://mongo';
-    private const DATABASE = 'datagrid';
-    private const CLIENT_TYPEMAP = ['root' => 'array', 'document' => 'array'];
+    protected const   TEMP_DIR       = '%s/../var//Doctrine2.ODM';
+    protected const   HOSTNAME       = 'mongodb://mongo';
+    protected const   CLIENT_TYPEMAP = ['root' => 'array', 'document' => 'array'];
+    protected const   DATABASE       = 'datagrid';
     /**
      * @var DocumentManager
      */
@@ -44,13 +44,13 @@ abstract class TestCaseAbstract extends TestCase
         $configuration->setProxyDir(sprintf(self::TEMP_DIR, __DIR__));
         $configuration->setHydratorDir(sprintf(self::TEMP_DIR, __DIR__));
         $configuration->setMetadataDriverImpl(AnnotationDriver::create([sprintf('%s/Document', __DIR__)]));
-        $configuration->setDefaultDB(self::DATABASE);
+        $configuration->setDefaultDB(static::DATABASE);
 
         $this->dm = DocumentManager::create(
             new Client(self::HOSTNAME, [], ['typeMap' => self::CLIENT_TYPEMAP]),
             $configuration
         );
-        $this->dm->getClient()->dropDatabase(self::DATABASE);
+        $this->dm->getClient()->dropDatabase(static::DATABASE);
         $this->dm->getSchemaManager()->createCollections();
         $this->dm->getSchemaManager()->ensureDocumentIndexes(Document::class);
     }

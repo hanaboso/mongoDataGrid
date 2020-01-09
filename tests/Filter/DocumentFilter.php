@@ -27,10 +27,6 @@ final class DocumentFilter extends GridFilterAbstract
             'float'         => 'float',
             'bool'          => 'bool',
             'date'          => 'date',
-            'int_gte'       => 'int>=',
-            'int_gt'        => 'int>',
-            'int_lt'        => 'int<',
-            'int_lte'       => 'int<=',
             'custom_string' => 'string',
         ];
     }
@@ -57,6 +53,7 @@ final class DocumentFilter extends GridFilterAbstract
     {
         return [
             'string',
+            'custom_string',
             'int',
             'float',
         ];
@@ -104,7 +101,7 @@ final class DocumentFilter extends GridFilterAbstract
         return [
             'custom_string' => function (
                 Builder $builder,
-                string $value,
+                $value,
                 string $name,
                 Expr $expr,
                 ?string $operator
@@ -112,7 +109,7 @@ final class DocumentFilter extends GridFilterAbstract
                 $builder;
                 $operator;
 
-                $expr->field($name)->equals($value);
+                $expr->field($name)->equals($value[0] ?? $value);
             },
         ];
     }

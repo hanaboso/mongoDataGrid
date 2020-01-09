@@ -2,6 +2,7 @@
 
 namespace MongoDataGridTests\Integration;
 
+use Exception;
 use MongoDataGridTests\Document\Document;
 use MongoDataGridTests\TestCaseAbstract;
 
@@ -13,11 +14,17 @@ use MongoDataGridTests\TestCaseAbstract;
 final class DatabaseConfigurationTest extends TestCaseAbstract
 {
 
+    protected const   DATABASE = 'datagrid1';
+
     /**
-     *
+     * @throws Exception
      */
     public function testConnection(): void
     {
+        $this->dm->getClient()->dropDatabase(self::DATABASE);
+        $this->dm->getSchemaManager()->createCollections();
+        $this->dm->getSchemaManager()->ensureDocumentIndexes(Document::class);
+
         $this->dm->persist((new Document())->setString('Document'));
         $this->dm->flush();
         $this->dm->clear();

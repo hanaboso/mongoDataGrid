@@ -5,6 +5,7 @@ namespace Hanaboso\MongoDataGrid\Result;
 use Doctrine\ODM\MongoDB\Iterator\Iterator;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\Query\Query;
+use Hanaboso\Utils\Date\DateTimeUtils;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
 
@@ -15,8 +16,6 @@ use MongoDB\BSON\UTCDateTime;
  */
 class ResultData
 {
-
-    private const DATETIME = 'Y-m-d H:i:s';
 
     /**
      * @var Query<mixed>
@@ -48,15 +47,17 @@ class ResultData
                 if (is_object($innerItem)) {
                     switch (get_class($innerItem)) {
                         case ObjectId::class:
-                            /** @var ObjectId $innerItem */
-                            $data[$key]['id'] = (string) $innerItem;
+                            /** @var ObjectId $tt */
+                            $tt               = $innerItem;
+                            $data[$key]['id'] = (string) $tt;
                             unset($data[$key][$innerKey]);
+
                             break;
                         case UTCDateTime::class:
-                            /** @var UTCDateTime $innerItem */
-                            $data[$key][$innerKey] = $innerItem->toDateTime()->format(self::DATETIME);
-                            break;
-                        default:
+                            /** @var UTCDateTime $tt */
+                            $tt                    = $innerItem;
+                            $data[$key][$innerKey] = $tt->toDateTime()->format(DateTimeUtils::DATE_TIME);
+
                             break;
                     }
                 }
