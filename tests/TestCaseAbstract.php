@@ -22,10 +22,9 @@ abstract class TestCaseAbstract extends TestCase
 
     use PrivateTrait;
 
-    protected const   TEMP_DIR       = '%s/../var//Doctrine2.ODM';
-    protected const   HOSTNAME       = 'mongodb://mongo';
+    protected const   TEMP_DIR = '%s/../var//Doctrine2.ODM';
     protected const   CLIENT_TYPEMAP = ['root' => 'array', 'document' => 'array'];
-    protected const   DATABASE       = 'datagrid';
+    protected const   DATABASE = 'datagrid';
     /**
      * @var DocumentManager
      */
@@ -47,7 +46,11 @@ abstract class TestCaseAbstract extends TestCase
         $configuration->setDefaultDB(static::DATABASE);
 
         $this->dm = DocumentManager::create(
-            new Client(self::HOSTNAME, [], ['typeMap' => self::CLIENT_TYPEMAP]),
+            new Client(
+                sprintf('mongodb://%s', getenv('MONGODB_HOST') ?: '127.0.0.1'),
+                [],
+                ['typeMap' => self::CLIENT_TYPEMAP]
+            ),
             $configuration
         );
         $this->dm->getClient()->dropDatabase(static::DATABASE);
