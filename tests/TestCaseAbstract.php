@@ -22,9 +22,10 @@ abstract class TestCaseAbstract extends TestCase
 
     use PrivateTrait;
 
-    protected const   TEMP_DIR = '%s/../var//Doctrine2.ODM';
+    protected const   TEMP_DIR       = '%s/../var//Doctrine2.ODM';
     protected const   CLIENT_TYPEMAP = ['root' => 'array', 'document' => 'array'];
-    protected const   DATABASE = 'datagrid';
+    protected const   DATABASE       = 'datagrid';
+
     /**
      * @var DocumentManager
      */

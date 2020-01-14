@@ -101,15 +101,11 @@ abstract class GridFilterAbstract
         $this->dm = $dm;
         $this->setDocument();
 
-        $this->countQuery          = $this->configCustomCountQuery();
         $this->filterCols          = $this->filterCols();
-        $this->filterColsCallbacks = $this->configFilterColsCallbacks();
         $this->orderCols           = $this->orderCols();
         $this->searchableCols      = $this->searchableCols();
-        $this->searchQuery         = $this->prepareSearchQuery();
+        $this->filterColsCallbacks = $this->configFilterColsCallbacks();
         $this->useTextSearch       = $this->useTextSearch();
-
-        $this->searchQuery->hydrate(FALSE);
     }
 
     /**
@@ -120,6 +116,10 @@ abstract class GridFilterAbstract
      */
     public function getData(GridRequestDtoInterface $gridRequestDto): ResultData
     {
+        $this->searchQuery = $this->prepareSearchQuery();
+        $this->countQuery  = $this->configCustomCountQuery();
+        $this->searchQuery->hydrate(FALSE);
+
         $this->processSortations($gridRequestDto);
         $this->processConditions($gridRequestDto, $this->searchQuery);
 
@@ -202,8 +202,8 @@ abstract class GridFilterAbstract
      */
     private function processConditions(GridRequestDtoInterface $dto, Builder $builder): void
     {
-        $conditions                  = $dto->getFilter();
-        $advancedConditionExpression = $builder->expr();
+        $conditions          = $dto->getFilter();
+        $conditionExpression = $builder->expr();
 
         $exp = FALSE;
         foreach ($conditions as $andCondition) {
@@ -261,13 +261,13 @@ abstract class GridFilterAbstract
             }
 
             if ($hasExpression) {
-                $advancedConditionExpression->addAnd($expression);
+                $conditionExpression->addAnd($expression);
                 $exp = TRUE;
             }
         }
 
         if ($exp) {
-            $builder->addAnd($advancedConditionExpression);
+            $builder->addAnd($conditionExpression);
         }
 
         $search = $dto->getSearch();

@@ -3014,4 +3014,36 @@ final class FilterTest extends TestCaseAbstract
         self::assertNotEmpty($dto->getFilter(FALSE));
     }
 
+    /**
+     * @throws Exception
+     */
+    public function testGetDataNoCountQuery(): void
+    {
+        $dto = new GridRequestDto(
+            [
+                self::SEARCH => 'Unknown',
+            ]
+        );
+        $f   = $this->getMockBuilder(DocumentFilter::class)
+            ->setMethods(['configCustomCountQuery'])
+            ->setConstructorArgs([$this->dm])
+            ->getMock();
+        $f->method('configCustomCountQuery')->willReturn(NULL);
+        $this->setProperty($f, 'dm', $this->dm);
+
+        $result = $f->getData($dto)->toArray();
+        self::assertEquals([], $result);
+        self::assertEquals(
+            [
+                'filter'       => '[]',
+                'page'         => 1,
+                'itemsPerPage' => 10,
+                'search'       => 'Unknown',
+                'total'        => 0,
+                'sorter'       => NULL,
+            ],
+            $dto->getParamsForHeader()
+        );
+    }
+
 }

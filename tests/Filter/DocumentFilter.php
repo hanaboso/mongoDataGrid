@@ -79,7 +79,7 @@ final class DocumentFilter extends GridFilterAbstract
     }
 
     /**
-     * @return Builder|null
+     * @return Builder|NULL
      */
     protected function configCustomCountQuery(): ?Builder
     {
@@ -99,7 +99,7 @@ final class DocumentFilter extends GridFilterAbstract
         parent::configFilterColsCallbacks();
 
         return [
-            'custom_string' => function (
+            'custom_string' => static function (
                 Builder $builder,
                 $value,
                 string $name,
