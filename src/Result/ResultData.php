@@ -23,13 +23,20 @@ class ResultData
     private Query $query;
 
     /**
+     * @var string
+     */
+    private string $dateFormat;
+
+    /**
      * ResultData constructor.
      *
      * @param Query<mixed> $query
+     * @param string       $dateFormat
      */
-    public function __construct(Query $query)
+    public function __construct(Query $query, string $dateFormat = DateTimeUtils::DATE_TIME)
     {
-        $this->query = $query;
+        $this->query      = $query;
+        $this->dateFormat = $dateFormat;
     }
 
     /**
@@ -56,7 +63,7 @@ class ResultData
                         case UTCDateTime::class:
                             /** @var UTCDateTime $tt */
                             $tt                    = $innerItem;
-                            $data[$key][$innerKey] = $tt->toDateTime()->format(DateTimeUtils::DATE_TIME);
+                            $data[$key][$innerKey] = $tt->toDateTime()->format($this->dateFormat);
 
                             break;
                     }

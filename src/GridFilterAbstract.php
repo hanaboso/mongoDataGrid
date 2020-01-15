@@ -10,6 +10,7 @@ use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Exception;
 use Hanaboso\MongoDataGrid\Exception\GridException;
 use Hanaboso\MongoDataGrid\Result\ResultData;
+use Hanaboso\Utils\Date\DateTimeUtils;
 use LogicException;
 use MongoDB\BSON\Regex;
 use MongoDB\Driver\Exception\CommandException;
@@ -44,6 +45,8 @@ abstract class GridFilterAbstract
     public const VALUE     = 'value';
     public const DIRECTION = 'direction';
     public const SEARCH    = 'search';
+
+    protected const DATE_FORMAT = DateTimeUtils::DATE_TIME;
 
     /**
      * @var DocumentManager
@@ -132,7 +135,7 @@ abstract class GridFilterAbstract
         $this->processPagination($gridRequestDto);
 
         try {
-            $data = new ResultData($this->searchQuery->getQuery());
+            $data = new ResultData($this->searchQuery->getQuery(), static::DATE_FORMAT);
             /** @var Builder $countQuery */
             $countQuery = $this->countQuery;
             /** @var int $total */
@@ -467,11 +470,17 @@ abstract class GridFilterAbstract
                     ->addOr($builder->expr()->field($name)->equals(NULL))
                     ->addOr($builder->expr()->field($name)->equals(self::getValue($value)));
             case self::LIKE:
-                return $builder->expr()->field($name)->equals(new Regex(sprintf('%s', preg_quote($value)), 'i'));
+                return $builder->expr()->field($name)->equals(
+                    new Regex(sprintf('%s', preg_quote(self::getValue($value))), 'i')
+                );
             case self::STARTS:
-                return $builder->expr()->field($name)->equals(new Regex(sprintf('^%s', preg_quote($value)), 'i'));
+                return $builder->expr()->field($name)->equals(
+                    new Regex(sprintf('^%s', preg_quote(self::getValue($value))), 'i')
+                );
             case self::ENDS:
-                return $builder->expr()->field($name)->equals(new Regex(sprintf('%s$', preg_quote($value)), 'i'));
+                return $builder->expr()->field($name)->equals(
+                    new Regex(sprintf('%s$', preg_quote(self::getValue($value))), 'i')
+                );
             case self::BETWEEN:
                 if (is_array($value) && count($value) >= 2) {
                     return $builder->expr()
