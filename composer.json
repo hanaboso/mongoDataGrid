@@ -1,7 +1,7 @@
 {
     "name": "hanaboso/mongo-data-grid",
     "license": "proprietary",
-    "version": "1.4.2",
+    "version": "1.4.3",
     "description": "MongoDataGrid",
     "autoload": {
         "psr-4": {

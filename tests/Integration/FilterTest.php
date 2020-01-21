@@ -23,43 +23,20 @@ use Throwable;
 final class FilterTest extends TestCaseAbstract
 {
 
-    private const DATETIME = 'Y-m-d H:i:s';
-
-    private const SORTER         = 'sorter';
-    private const FILTER         = 'filter';
-    private const PAGE           = 'page';
-    private const SEARCH         = 'search';
-    private const ITEMS_PER_PAGE = 'itemsPerPage';
-
     protected const PAGING = 'paging';
+
+    private const DATETIME = 'Y-m-d H:i:s';
+    private const SORTER   = 'sorter';
+    private const FILTER   = 'filter';
+    private const PAGE     = 'page';
+    private const SEARCH   = 'search';
+
+    private const ITEMS_PER_PAGE = 'itemsPerPage';
 
     /**
      * @var DateTime
      */
     private DateTime $today;
-
-    /**
-     * @throws Exception
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->today = new DateTime('today', new DateTimeZone('UTC'));
-
-        for ($i = 0; $i < 10; $i++) {
-            $this->dm->persist(
-                (new Document())
-                    ->setString(sprintf('String %s', $i))
-                    ->setInt($i)
-                    ->setFloat((float) sprintf('%s.%s', $i, $i))
-                    ->setBool($i % 2 === 0)
-                    ->setDate(new DateTime(sprintf('today +%s day', $i), new DateTimeZone('UTC')))
-            );
-        }
-
-        $this->dm->flush();
-    }
 
     /**
      * @throws Exception
@@ -1233,8 +1210,8 @@ final class FilterTest extends TestCaseAbstract
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (Exception $e) {
-            $this->assertEquals(GridException::SORT_COLS_ERROR, $e->getCode());
-            $this->assertEquals(
+            self::assertEquals(GridException::SORT_COLS_ERROR, $e->getCode());
+            self::assertEquals(
                 "Column 'Unknown' cannot be used for sorting! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::orderCols'?",
                 $e->getMessage()
             );
@@ -1814,8 +1791,8 @@ final class FilterTest extends TestCaseAbstract
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (Exception $e) {
-            $this->assertEquals(GridException::FILTER_COLS_ERROR, $e->getCode());
-            $this->assertEquals(
+            self::assertEquals(GridException::FILTER_COLS_ERROR, $e->getCode());
+            self::assertEquals(
                 "Column 'Unknown' cannot be used for filtering! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::filterCols'?",
                 $e->getMessage()
             );
@@ -1833,8 +1810,8 @@ final class FilterTest extends TestCaseAbstract
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (Exception $e) {
-            $this->assertEquals(GridException::SEARCHABLE_COLS_ERROR, $e->getCode());
-            $this->assertEquals(
+            self::assertEquals(GridException::SEARCHABLE_COLS_ERROR, $e->getCode());
+            self::assertEquals(
                 "Column cannot be used for searching! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::searchableCols'?",
                 $e->getMessage()
             );
@@ -1852,7 +1829,7 @@ final class FilterTest extends TestCaseAbstract
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (Throwable $e) {
-            $this->assertEquals(
+            self::assertEquals(
                 "Column cannot be used for searching! Missing TEXT index on 'MongoDataGridTests\Filter\DocumentFilter::searchableCols' fields!",
                 $e->getMessage()
             );
@@ -2440,8 +2417,8 @@ final class FilterTest extends TestCaseAbstract
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (Exception $e) {
-            $this->assertEquals(GridException::FILTER_COLS_ERROR, $e->getCode());
-            $this->assertEquals(
+            self::assertEquals(GridException::FILTER_COLS_ERROR, $e->getCode());
+            self::assertEquals(
                 "Column 'Unknown' cannot be used for filtering! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::filterCols'?",
                 $e->getMessage()
             );
@@ -2469,8 +2446,8 @@ final class FilterTest extends TestCaseAbstract
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (Exception $e) {
-            $this->assertEquals(GridException::FILTER_COLS_ERROR, $e->getCode());
-            $this->assertEquals(
+            self::assertEquals(GridException::FILTER_COLS_ERROR, $e->getCode());
+            self::assertEquals(
                 "Column '_MODIFIER_SEARCH' cannot be used for filtering! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::filterCols'?",
                 $e->getMessage()
             );
@@ -2494,7 +2471,7 @@ final class FilterTest extends TestCaseAbstract
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (LogicException $e) {
-            $this->assertEquals("Advanced filter must have 'column', 'operator' and 'value' field!", $e->getMessage());
+            self::assertEquals("Advanced filter must have 'column', 'operator' and 'value' field!", $e->getMessage());
         }
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -3044,6 +3021,29 @@ final class FilterTest extends TestCaseAbstract
             ],
             $dto->getParamsForHeader()
         );
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->today = new DateTime('today', new DateTimeZone('UTC'));
+
+        for ($i = 0; $i < 10; $i++) {
+            $this->dm->persist(
+                (new Document())
+                    ->setString(sprintf('String %s', $i))
+                    ->setInt($i)
+                    ->setFloat((float) sprintf('%s.%s', $i, $i))
+                    ->setBool($i % 2 === 0)
+                    ->setDate(new DateTime(sprintf('today +%s day', $i), new DateTimeZone('UTC')))
+            );
+        }
+
+        $this->dm->flush();
     }
 
 }

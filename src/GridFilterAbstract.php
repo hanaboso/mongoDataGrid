@@ -95,6 +95,36 @@ abstract class GridFilterAbstract
     private array $filterColsCallbacks;
 
     /**
+     *
+     */
+    abstract protected function prepareSearchQuery(): Builder;
+
+    /**
+     *
+     */
+    abstract protected function setDocument(): void;
+
+    /**
+     * @return mixed[]
+     */
+    abstract protected function filterCols(): array;
+
+    /**
+     * @return mixed[]
+     */
+    abstract protected function orderCols(): array;
+
+    /**
+     * @return mixed[]
+     */
+    abstract protected function searchableCols(): array;
+
+    /**
+     * @return bool
+     */
+    abstract protected function useTextSearch(): bool;
+
+    /**
      * GridFilterAbstract constructor.
      *
      * @param DocumentManager $dm
@@ -166,6 +196,101 @@ abstract class GridFilterAbstract
         $repo = $this->dm->getRepository($this->document);
 
         return $repo;
+    }
+
+    /**
+     * @param Builder     $builder
+     * @param string      $name
+     * @param mixed       $value
+     * @param string|NULL $operator
+     *
+     * @return Expr
+     */
+    public static function getCondition(Builder $builder, string $name, $value, ?string $operator = NULL): Expr
+    {
+        switch ($operator) {
+            case self::EQ:
+                return is_array($value) ?
+                    $builder->expr()->field($name)->in($value) :
+                    $builder->expr()->field($name)->equals($value);
+            case self::NEQ:
+                return is_array($value) ?
+                    $builder->expr()->field($name)->notIn($value) :
+                    $builder->expr()->field($name)->notEqual($value);
+            case self::GTE:
+                return $builder->expr()->field($name)->gte(self::getValue($value));
+            case self::GT:
+                return $builder->expr()->field($name)->gt(self::getValue($value));
+            case self::LTE:
+                return $builder->expr()->field($name)->lte(self::getValue($value));
+            case self::LT:
+                return $builder->expr()->field($name)->lt(self::getValue($value));
+            case self::NEMPTY:
+                return $builder->expr()
+                    ->addOr($builder->expr()->field($name)->notEqual(NULL))
+                    ->addOr($builder->expr()->field($name)->notEqual(self::getValue($value)));
+            case self::EMPTY:
+                return $builder->expr()
+                    ->addOr($builder->expr()->field($name)->equals(NULL))
+                    ->addOr($builder->expr()->field($name)->equals(self::getValue($value)));
+            case self::LIKE:
+                return $builder->expr()->field($name)->equals(
+                    new Regex(sprintf('%s', preg_quote(self::getValue($value))), 'i')
+                );
+            case self::STARTS:
+                return $builder->expr()->field($name)->equals(
+                    new Regex(sprintf('^%s', preg_quote(self::getValue($value))), 'i')
+                );
+            case self::ENDS:
+                return $builder->expr()->field($name)->equals(
+                    new Regex(sprintf('%s$', preg_quote(self::getValue($value))), 'i')
+                );
+            case self::BETWEEN:
+                if (is_array($value) && count($value) >= 2) {
+                    return $builder->expr()
+                        ->addAnd($builder->expr()->field($name)->gte($value[0]))
+                        ->addAnd($builder->expr()->field($name)->lte($value[1]));
+                }
+
+                return $builder->expr()->field($name)->equals(self::getValue($value));
+            case self::NBETWEEN:
+                if (is_array($value) && count($value) >= 2) {
+                    return $builder->expr()
+                        ->addOr($builder->expr()->field($name)->lte($value[0]))
+                        ->addOr($builder->expr()->field($name)->gte($value[1]));
+                }
+
+                return $builder->expr()->field($name)->notEqual(self::getValue($value));
+            default:
+                return $builder->expr()->field($name)->equals(self::getValue($value));
+        }
+    }
+
+    /**
+     * -------------------------------------------- HELPERS -----------------------------------------------
+     */
+
+    /**
+     * In child can configure GridFilterAbstract::filterColsCallbacks
+     * example child content
+     *
+     * return [ESomeEnumCols::CREATED_AT_FROM => function (Builder $builder,string $value,string $name,Expr $expr,?string $operator){}]
+     *
+     * @return mixed[]
+     */
+    protected function configFilterColsCallbacks(): array
+    {
+        return [];
+    }
+
+    /**
+     * In child can configure GridFilterAbstract::configCustomCountQuery
+     * example child content
+     * return $this->getRepository()->createQueryBuilder('c')->select('count(c.id)')
+     */
+    protected function configCustomCountQuery(): ?Builder
+    {
+        return NULL;
     }
 
     /**
@@ -374,131 +499,6 @@ abstract class GridFilterAbstract
                 ),
                 GridException::FILTER_COLS_ERROR
             );
-        }
-    }
-
-    /**
-     *
-     */
-    abstract protected function prepareSearchQuery(): Builder;
-
-    /**
-     *
-     */
-    abstract protected function setDocument(): void;
-
-    /**
-     * @return mixed[]
-     */
-    abstract protected function filterCols(): array;
-
-    /**
-     * @return mixed[]
-     */
-    abstract protected function orderCols(): array;
-
-    /**
-     * @return mixed[]
-     */
-    abstract protected function searchableCols(): array;
-
-    /**
-     * @return bool
-     */
-    abstract protected function useTextSearch(): bool;
-
-    /**
-     * -------------------------------------------- HELPERS -----------------------------------------------
-     */
-
-    /**
-     * In child can configure GridFilterAbstract::filterColsCallbacks
-     * example child content
-     *
-     * return [ESomeEnumCols::CREATED_AT_FROM => function (Builder $builder,string $value,string $name,Expr $expr,?string $operator){}]
-     *
-     * @return mixed[]
-     */
-    protected function configFilterColsCallbacks(): array
-    {
-        return [];
-    }
-
-    /**
-     * In child can configure GridFilterAbstract::configCustomCountQuery
-     * example child content
-     * return $this->getRepository()->createQueryBuilder('c')->select('count(c.id)')
-     */
-    protected function configCustomCountQuery(): ?Builder
-    {
-        return NULL;
-    }
-
-    /**
-     * @param Builder     $builder
-     * @param string      $name
-     * @param mixed       $value
-     * @param string|NULL $operator
-     *
-     * @return Expr
-     */
-    public static function getCondition(Builder $builder, string $name, $value, ?string $operator = NULL): Expr
-    {
-        switch ($operator) {
-            case self::EQ:
-                return is_array($value) ?
-                    $builder->expr()->field($name)->in($value) :
-                    $builder->expr()->field($name)->equals($value);
-            case self::NEQ:
-                return is_array($value) ?
-                    $builder->expr()->field($name)->notIn($value) :
-                    $builder->expr()->field($name)->notEqual($value);
-            case self::GTE:
-                return $builder->expr()->field($name)->gte(self::getValue($value));
-            case self::GT:
-                return $builder->expr()->field($name)->gt(self::getValue($value));
-            case self::LTE:
-                return $builder->expr()->field($name)->lte(self::getValue($value));
-            case self::LT:
-                return $builder->expr()->field($name)->lt(self::getValue($value));
-            case self::NEMPTY:
-                return $builder->expr()
-                    ->addOr($builder->expr()->field($name)->notEqual(NULL))
-                    ->addOr($builder->expr()->field($name)->notEqual(self::getValue($value)));
-            case self::EMPTY:
-                return $builder->expr()
-                    ->addOr($builder->expr()->field($name)->equals(NULL))
-                    ->addOr($builder->expr()->field($name)->equals(self::getValue($value)));
-            case self::LIKE:
-                return $builder->expr()->field($name)->equals(
-                    new Regex(sprintf('%s', preg_quote(self::getValue($value))), 'i')
-                );
-            case self::STARTS:
-                return $builder->expr()->field($name)->equals(
-                    new Regex(sprintf('^%s', preg_quote(self::getValue($value))), 'i')
-                );
-            case self::ENDS:
-                return $builder->expr()->field($name)->equals(
-                    new Regex(sprintf('%s$', preg_quote(self::getValue($value))), 'i')
-                );
-            case self::BETWEEN:
-                if (is_array($value) && count($value) >= 2) {
-                    return $builder->expr()
-                        ->addAnd($builder->expr()->field($name)->gte($value[0]))
-                        ->addAnd($builder->expr()->field($name)->lte($value[1]));
-                }
-
-                return $builder->expr()->field($name)->equals(self::getValue($value));
-            case self::NBETWEEN:
-                if (is_array($value) && count($value) >= 2) {
-                    return $builder->expr()
-                        ->addOr($builder->expr()->field($name)->lte($value[0]))
-                        ->addOr($builder->expr()->field($name)->gte($value[1]));
-                }
-
-                return $builder->expr()->field($name)->notEqual(self::getValue($value));
-            default:
-                return $builder->expr()->field($name)->equals(self::getValue($value));
         }
     }
 
