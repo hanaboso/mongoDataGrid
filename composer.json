@@ -1,7 +1,7 @@
 {
     "name": "hanaboso/mongo-data-grid",
     "license": "proprietary",
-    "version": "1.4.4",
+    "version": "1.4.5",
     "description": "MongoDataGrid",
     "autoload": {
         "psr-4": {
@@ -24,13 +24,5 @@
     },
     "require-dev": {
         "hanaboso/php-check-utils": "^1.1"
-    },
-    "replace": {
-        "ralouphie/getallheaders": "*",
-        "symfony/polyfill-ctype": "*",
-        "symfony/polyfill-intl-idn": "*",
-        "symfony/polyfill-mbstring": "*",
-        "symfony/polyfill-php72": "*",
-        "symfony/polyfill-php73": "*"
     }
 }
