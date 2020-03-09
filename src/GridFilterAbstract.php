@@ -276,7 +276,7 @@ abstract class GridFilterAbstract
     {
         $total    = $dto->getTotal();
         $page     = $dto->getPage();
-        $lastPage = (int) ceil($dto->getTotal() / $dto->getItemsPerPage());
+        $lastPage = (int) max(1, ceil($dto->getTotal() / $dto->getItemsPerPage()));
 
         return [
             'items'  => $items,
