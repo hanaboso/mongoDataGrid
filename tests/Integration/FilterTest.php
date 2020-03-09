@@ -6,6 +6,7 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use Hanaboso\MongoDataGrid\Exception\GridException;
+use Hanaboso\MongoDataGrid\GridFilterAbstract;
 use Hanaboso\MongoDataGrid\GridRequestDto;
 use LogicException;
 use MongoDataGridTests\Document\Document;
@@ -3020,6 +3021,35 @@ final class FilterTest extends TestCaseAbstract
                 'sorter'       => NULL,
             ],
             $dto->getParamsForHeader()
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testGetGridResponse(): void
+    {
+        $dto    = new GridRequestDto([]);
+        $result = GridFilterAbstract::getGridResponse($dto, (new DocumentFilter($this->dm))->getData($dto)->toArray());
+
+        $result['items'] = [];
+
+        self::assertEquals(
+            [
+                'items'  => [],
+                'filter' => [],
+                'sorter' => [],
+                'search' => NULL,
+                'paging' => [
+                    'page'         => 1,
+                    'itemsPerPage' => 10,
+                    'total'        => 10,
+                    'nextPage'     => 1,
+                    'lastPage'     => 1,
+                    'previousPage' => 1,
+                ],
+            ],
+            $result
         );
     }
 

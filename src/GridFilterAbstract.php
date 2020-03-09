@@ -267,6 +267,34 @@ abstract class GridFilterAbstract
     }
 
     /**
+     * @param GridRequestDtoInterface $dto
+     * @param mixed[]                 $items
+     *
+     * @return mixed[]
+     */
+    public static function getGridResponse(GridRequestDtoInterface $dto, array $items): array
+    {
+        $total    = $dto->getTotal();
+        $page     = $dto->getPage();
+        $lastPage = (int) ceil($dto->getTotal() / $dto->getItemsPerPage());
+
+        return [
+            'items'  => $items,
+            'filter' => $dto->getFilter(FALSE),
+            'sorter' => $dto->getOrderBy(),
+            'search' => $dto->getSearch(),
+            'paging' => [
+                'page'         => $page,
+                'itemsPerPage' => $dto->getItemsPerPage(),
+                'total'        => $total,
+                'nextPage'     => min($lastPage, $page + 1),
+                'lastPage'     => $lastPage,
+                'previousPage' => max(1, $page - 1),
+            ],
+        ];
+    }
+
+    /**
      * -------------------------------------------- HELPERS -----------------------------------------------
      */
 
