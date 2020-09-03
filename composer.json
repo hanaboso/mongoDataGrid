@@ -1,18 +1,8 @@
 {
     "name": "hanaboso/mongo-data-grid",
-    "license": "proprietary",
-    "version": "1.4.8",
     "description": "MongoDataGrid",
-    "autoload": {
-        "psr-4": {
-            "Hanaboso\\MongoDataGrid\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "MongoDataGridTests\\": "tests/"
-        }
-    },
+    "version": "1.4.9",
+    "license": "Apache-2.0",
     "require": {
         "php": "^7.4",
         "ext-ctype": "*",
@@ -24,5 +14,15 @@
     },
     "require-dev": {
         "hanaboso/php-check-utils": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hanaboso\\MongoDataGrid\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MongoDataGridTests\\": "tests/"
+        }
     }
 }

@@ -54,8 +54,6 @@ final class DocumentFilter extends GridFilterAbstract
         return [
             'string',
             'custom_string',
-            'int',
-            'float',
         ];
     }
 

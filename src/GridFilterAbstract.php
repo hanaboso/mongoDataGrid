@@ -7,6 +7,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Query\Expr;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Exception;
 use Hanaboso\MongoDataGrid\Exception\GridException;
 use Hanaboso\MongoDataGrid\Result\ResultData;
@@ -188,14 +189,11 @@ abstract class GridFilterAbstract
     }
 
     /**
-     * @return DocumentRepository<mixed>
+     * @return DocumentRepository<mixed>&ObjectRepository
      */
-    public function getRepository(): DocumentRepository
+    public function getRepository(): ObjectRepository
     {
-        /** @var DocumentRepository<mixed> $repo */
-        $repo = $this->dm->getRepository($this->document);
-
-        return $repo;
+        return $this->dm->getRepository($this->document);
     }
 
     /**

@@ -1,2 +1,15 @@
 includes:
-    - vendor/hanaboso/php-check-utils/phpstan.neon
+	- vendor/hanaboso/php-check-utils/phpstan.neon
+parameters:
+	excludes_analyse:
+	ignoreErrors:
+	    -
+	        message: '#Type mixed in generic type Doctrine.* #'
+	        path:  src/GridFilterAbstract.php
+	ergebnis:
+		classesNotRequiredToBeAbstractOrFinal:
+			- Hanaboso\MongoDataGrid\Result\ResultData
+			- Hanaboso\MongoDataGrid\GridRequestDto
+		classesAllowedToBeExtended:
+			- MongoDataGridTests\TestCaseAbstract
+			- Hanaboso\MongoDataGrid\GridFilterAbstract

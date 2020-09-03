@@ -22,6 +22,7 @@ class GridRequestDto implements GridRequestDtoInterface
     public const  SORTER         = 'sorter';
     public const  SEARCH         = 'search';
     private const DEFAULT_LIMIT  = 10;
+    private const DIRECTION      = [GridFilterAbstract::ASCENDING, GridFilterAbstract::DESCENDING];
 
     /**
      * @var mixed[]
@@ -175,14 +176,7 @@ class GridRequestDto implements GridRequestDtoInterface
                 );
             }
 
-            if (!in_array(
-                $item[GridFilterAbstract::DIRECTION],
-                [
-                    GridFilterAbstract::ASCENDING,
-                    GridFilterAbstract::DESCENDING,
-                ],
-                TRUE
-            )) {
+            if (!in_array($item[GridFilterAbstract::DIRECTION], self::DIRECTION, TRUE)) {
                 throw new GridException(
                     sprintf(
                         'Invalid direction of sorter [%s], valid options: [%s, %s]',
