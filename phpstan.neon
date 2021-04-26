@@ -3,9 +3,12 @@ includes:
 parameters:
 	excludes_analyse:
 	ignoreErrors:
-	    -
-	        message: '#Type mixed in generic type Doctrine.* #'
-	        path:  src/GridFilterAbstract.php
+		-
+			message: '#Type mixed in generic type Doctrine.* #'
+			path:  src/GridFilterAbstract.php
+		-
+			message: '#Call to method findAll.* #'
+			path:  tests/Integration/DatabaseConfigurationTest.php
 	ergebnis:
 		classesNotRequiredToBeAbstractOrFinal:
 			- Hanaboso\MongoDataGrid\Result\ResultData

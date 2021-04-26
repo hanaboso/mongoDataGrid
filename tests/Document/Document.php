@@ -11,9 +11,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
  * @package MongoDataGridTests\Document
  *
  * @ODM\Document
- * @ODM\Indexes({
- *     @ODM\Index(keys={"string"="text", "int"="text", "float"="text"})
- * })
+ * @ODM\Index(keys={"string"="text", "int"="text", "float"="text"})
  */
 final class Document
 {
@@ -23,7 +21,7 @@ final class Document
      *
      * @ODM\Id()
      */
-    private $id;
+    private string $id;
 
     /**
      * @var string

@@ -18,25 +18,13 @@ class ResultData
 {
 
     /**
-     * @var Query<mixed>
-     */
-    private Query $query;
-
-    /**
-     * @var string
-     */
-    private string $dateFormat;
-
-    /**
      * ResultData constructor.
      *
      * @param Query<mixed> $query
      * @param string       $dateFormat
      */
-    public function __construct(Query $query, string $dateFormat = DateTimeUtils::DATE_TIME)
+    public function __construct(private Query $query, private string $dateFormat = DateTimeUtils::DATE_TIME)
     {
-        $this->query      = $query;
-        $this->dateFormat = $dateFormat;
     }
 
     /**
@@ -52,7 +40,7 @@ class ResultData
         foreach ($data as $key => $item) {
             foreach ($item as $innerKey => $innerItem) {
                 if (is_object($innerItem)) {
-                    switch (get_class($innerItem)) {
+                    switch ($innerItem::class) {
                         case ObjectId::class:
                             /** @var ObjectId $tt */
                             $tt               = $innerItem;

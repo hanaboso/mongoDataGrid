@@ -1,19 +1,19 @@
 {
     "name": "hanaboso/mongo-data-grid",
     "description": "MongoDataGrid",
-    "version": "1.4.9",
+    "version": "1.5.0",
     "license": "Apache-2.0",
     "require": {
-        "php": "^7.4",
+        "php": "^8.0",
         "ext-ctype": "*",
         "ext-intl": "*",
         "ext-mbstring": "*",
         "ext-mongodb": "*",
-        "doctrine/mongodb-odm": "^2.0",
-        "hanaboso/utils": "^1.0"
+        "doctrine/mongodb-odm": "^2.2",
+        "hanaboso/utils": "^1.1"
     },
     "require-dev": {
-        "hanaboso/php-check-utils": "^1.1"
+        "hanaboso/php-check-utils": "^1.2"
     },
     "autoload": {
         "psr-4": {

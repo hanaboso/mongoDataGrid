@@ -50,11 +50,6 @@ abstract class GridFilterAbstract
     protected const DATE_FORMAT = DateTimeUtils::DATE_TIME;
 
     /**
-     * @var DocumentManager
-     */
-    protected DocumentManager $dm;
-
-    /**
      * @var string
      * @phpstan-var class-string
      */
@@ -130,9 +125,8 @@ abstract class GridFilterAbstract
      *
      * @param DocumentManager $dm
      */
-    public function __construct(DocumentManager $dm)
+    public function __construct(protected DocumentManager $dm)
     {
-        $this->dm = $dm;
         $this->setDocument();
 
         $this->filterCols          = $this->filterCols();
@@ -204,7 +198,7 @@ abstract class GridFilterAbstract
      *
      * @return Expr
      */
-    public static function getCondition(Builder $builder, string $name, $value, ?string $operator = NULL): Expr
+    public static function getCondition(Builder $builder, string $name, mixed $value, ?string $operator = NULL): Expr
     {
         switch ($operator) {
             case self::EQ:
@@ -495,7 +489,7 @@ abstract class GridFilterAbstract
      * @return mixed
      * @throws Exception
      */
-    private function processDateTime($value)
+    private function processDateTime(mixed $value): mixed
     {
         $inner = $value;
         if (is_array($value)) {
@@ -533,7 +527,7 @@ abstract class GridFilterAbstract
      *
      * @return mixed
      */
-    private static function getValue($value)
+    private static function getValue(mixed $value): mixed
     {
         return is_array($value) ? $value[0] : $value;
     }
