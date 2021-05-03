@@ -22,6 +22,7 @@ mirror:
         - "curl -X POST -F token=${MIRROR_TOKEN} -F ref=master -F variables\\[REPO\\]=hanaboso-mongoDataGrid https://gitlab.hanaboso.net/api/v4/projects/38/trigger/pipeline"
     only:
         - master
+        - 1.3-php8
 
 cleanup:
     stage: cleanup
