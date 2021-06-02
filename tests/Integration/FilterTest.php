@@ -13,7 +13,6 @@ use MongoDataGridTests\Document\Document;
 use MongoDataGridTests\Filter\DocumentFilter;
 use MongoDataGridTests\TestCaseAbstract;
 use MongoDB\Driver\Exception\CommandException;
-use PHPUnit\Framework\MockObject\MockObject;
 use Throwable;
 
 /**
@@ -119,7 +118,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
     }
 
@@ -137,8 +136,8 @@ final class FilterTest extends TestCaseAbstract
                             'direction' => 'ASC',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -214,7 +213,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -226,8 +225,8 @@ final class FilterTest extends TestCaseAbstract
                             'direction' => 'DESC',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -303,7 +302,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('-1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -315,8 +314,8 @@ final class FilterTest extends TestCaseAbstract
                             'direction' => 'ASC',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -392,7 +391,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -404,8 +403,8 @@ final class FilterTest extends TestCaseAbstract
                             'direction' => 'DESC',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -481,7 +480,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('-1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -493,8 +492,8 @@ final class FilterTest extends TestCaseAbstract
                             'direction' => 'ASC',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -570,7 +569,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -582,8 +581,8 @@ final class FilterTest extends TestCaseAbstract
                             'direction' => 'DESC',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -659,7 +658,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('-1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -671,8 +670,8 @@ final class FilterTest extends TestCaseAbstract
                             'direction' => 'ASC',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -748,7 +747,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -760,8 +759,8 @@ final class FilterTest extends TestCaseAbstract
                             'direction' => 'DESC',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -837,7 +836,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('-1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -849,8 +848,8 @@ final class FilterTest extends TestCaseAbstract
                             'direction' => 'ASC',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -926,7 +925,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('4 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -938,8 +937,8 @@ final class FilterTest extends TestCaseAbstract
                             'direction' => 'DESC',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1015,7 +1014,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('- 4 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1027,8 +1026,8 @@ final class FilterTest extends TestCaseAbstract
                             'direction' => 'ASC',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1104,7 +1103,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1116,8 +1115,8 @@ final class FilterTest extends TestCaseAbstract
                             'direction' => 'DESC',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1193,7 +1192,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('-1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         try {
@@ -1206,15 +1205,15 @@ final class FilterTest extends TestCaseAbstract
                                 'direction' => 'ASC',
                             ],
                         ],
-                    ]
-                )
+                    ],
+                ),
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (Exception $e) {
             self::assertEquals(GridException::SORT_COLS_ERROR, $e->getCode());
             self::assertEquals(
                 "Column 'Unknown' cannot be used for sorting! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::orderCols'?",
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
     }
@@ -1236,8 +1235,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1250,7 +1249,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1265,8 +1264,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1279,7 +1278,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1294,8 +1293,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1308,7 +1307,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1330,8 +1329,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1344,7 +1343,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1359,8 +1358,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1373,7 +1372,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $dto    = new GridRequestDto(
@@ -1387,7 +1386,7 @@ final class FilterTest extends TestCaseAbstract
                         ],
                     ],
                 ],
-            ]
+            ],
         );
         $result = (new DocumentFilter($this->dm))->getData($dto)->toArray();
         self::assertEquals(
@@ -1415,7 +1414,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
         self::assertEquals(
             [
@@ -1426,7 +1425,7 @@ final class FilterTest extends TestCaseAbstract
                 'total'        => 3,
                 'sorter'       => NULL,
             ],
-            $dto->getParamsForHeader()
+            $dto->getParamsForHeader(),
         );
         self::assertEquals(3, $dto->getTotal());
 
@@ -1444,7 +1443,7 @@ final class FilterTest extends TestCaseAbstract
 
                 ],
             ],
-            $result
+            $result,
         );
         self::assertEquals(
             [
@@ -1455,7 +1454,7 @@ final class FilterTest extends TestCaseAbstract
                 'total'        => 1,
                 'sorter'       => NULL,
             ],
-            $dto->getParamsForHeader()
+            $dto->getParamsForHeader(),
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1470,8 +1469,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1493,7 +1492,7 @@ final class FilterTest extends TestCaseAbstract
 
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1508,8 +1507,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1523,7 +1522,7 @@ final class FilterTest extends TestCaseAbstract
 
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1538,8 +1537,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1553,7 +1552,7 @@ final class FilterTest extends TestCaseAbstract
 
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1568,8 +1567,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1591,7 +1590,7 @@ final class FilterTest extends TestCaseAbstract
 
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1606,8 +1605,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1620,7 +1619,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('-1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1634,8 +1633,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals([], $result);
 
@@ -1650,8 +1649,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1727,7 +1726,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1741,7 +1740,7 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ],
                     ],
-                ]
+                ],
             ))->setAdditionalFilters(
                 [
                     [
@@ -1750,15 +1749,15 @@ final class FilterTest extends TestCaseAbstract
                             'operator' => 'EMPTY',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals([], $result);
 
         $dto    = new GridRequestDto(
             [
                 self::SEARCH => 'Unknown',
-            ]
+            ],
         );
         $result = (new DocumentFilter($this->dm))->getData($dto)->toArray();
         self::assertEquals([], $result);
@@ -1771,7 +1770,7 @@ final class FilterTest extends TestCaseAbstract
                 'total'        => 0,
                 'sorter'       => NULL,
             ],
-            $dto->getParamsForHeader()
+            $dto->getParamsForHeader(),
         );
 
         try {
@@ -1787,15 +1786,15 @@ final class FilterTest extends TestCaseAbstract
                                 ],
                             ],
                         ],
-                    ]
-                )
+                    ],
+                ),
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (Exception $e) {
             self::assertEquals(GridException::FILTER_COLS_ERROR, $e->getCode());
             self::assertEquals(
                 "Column 'Unknown' cannot be used for filtering! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::filterCols'?",
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
 
@@ -1806,15 +1805,15 @@ final class FilterTest extends TestCaseAbstract
                 new GridRequestDto(
                     [
                         self::SEARCH => 'Unknown',
-                    ]
-                )
+                    ],
+                ),
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (Exception $e) {
             self::assertEquals(GridException::SEARCHABLE_COLS_ERROR, $e->getCode());
             self::assertEquals(
                 "Column cannot be used for searching! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::searchableCols'?",
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
 
@@ -1825,14 +1824,14 @@ final class FilterTest extends TestCaseAbstract
                 new GridRequestDto(
                     [
                         self::SEARCH => 'Unknown',
-                    ]
-                )
+                    ],
+                ),
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (Throwable $e) {
             self::assertEquals(
                 "Column cannot be used for searching! Missing TEXT index on 'MongoDataGridTests\Filter\DocumentFilter::searchableCols' fields!",
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
     }
@@ -1856,8 +1855,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1870,7 +1869,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1887,8 +1886,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1901,7 +1900,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1918,8 +1917,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1932,7 +1931,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1955,8 +1954,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -1969,7 +1968,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -1986,8 +1985,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -2000,7 +1999,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $dto    = new GridRequestDto(
@@ -2016,7 +2015,7 @@ final class FilterTest extends TestCaseAbstract
                         ],
                     ]
                 ,
-            ]
+            ],
         );
         $result = (new DocumentFilter($this->dm))->getData($dto)->toArray();
         self::assertEquals(
@@ -2044,7 +2043,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
         self::assertEquals(3, $dto->getTotal());
 
@@ -2061,7 +2060,7 @@ final class FilterTest extends TestCaseAbstract
                         ],
                     ]
                 ,
-            ]
+            ],
         );
         $result = (new DocumentFilter($this->dm))->getData($dto)->toArray();
         self::assertEquals(
@@ -2075,7 +2074,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -2092,8 +2091,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -2113,7 +2112,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -2130,8 +2129,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -2144,7 +2143,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -2161,8 +2160,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -2175,7 +2174,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('-9 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -2192,8 +2191,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -2213,7 +2212,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -2230,8 +2229,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -2244,7 +2243,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('-1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -2265,8 +2264,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals([], $result);
 
@@ -2283,8 +2282,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -2360,7 +2359,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -2376,7 +2375,7 @@ final class FilterTest extends TestCaseAbstract
                                 ],
                             ],
                         ],
-                ]
+                ],
             ))->setAdditionalFilters(
                 [
                     [
@@ -2385,15 +2384,15 @@ final class FilterTest extends TestCaseAbstract
                             'operator' => 'EMPTY',
                         ],
                     ],
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals([], $result);
 
         $dto    = new GridRequestDto(
             [
                 self::SEARCH => 'Unknown',
-            ]
+            ],
         );
         $result = (new DocumentFilter($this->dm))->getData($dto)->toArray();
         self::assertEquals([], $result);
@@ -2413,15 +2412,15 @@ final class FilterTest extends TestCaseAbstract
                                 ],
                             ]
                         ,
-                    ]
-                )
+                    ],
+                ),
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (Exception $e) {
             self::assertEquals(GridException::FILTER_COLS_ERROR, $e->getCode());
             self::assertEquals(
                 "Column 'Unknown' cannot be used for filtering! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::filterCols'?",
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
 
@@ -2442,15 +2441,15 @@ final class FilterTest extends TestCaseAbstract
                                 ],
                             ]
                         ,
-                    ]
-                )
+                    ],
+                ),
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (Exception $e) {
             self::assertEquals(GridException::FILTER_COLS_ERROR, $e->getCode());
             self::assertEquals(
                 "Column '_MODIFIER_SEARCH' cannot be used for filtering! Have you forgotten add it to 'MongoDataGridTests\Filter\DocumentFilter::filterCols'?",
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
 
@@ -2467,8 +2466,8 @@ final class FilterTest extends TestCaseAbstract
                                 ],
                             ]
                         ,
-                    ]
-                )
+                    ],
+                ),
             )->toArray();
             self::assertEquals(TRUE, FALSE);
         } catch (LogicException $e) {
@@ -2489,8 +2488,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -2510,7 +2509,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -2537,8 +2536,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -2551,7 +2550,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -2580,8 +2579,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -2594,7 +2593,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -2632,8 +2631,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -2660,7 +2659,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
 
         $result = (new DocumentFilter($this->dm))->getData(
@@ -2691,8 +2690,8 @@ final class FilterTest extends TestCaseAbstract
                             ],
                         ]
                     ,
-                ]
-            )
+                ],
+            ),
         )->toArray();
         self::assertEquals(
             [
@@ -2705,7 +2704,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('-1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
     }
 
@@ -2722,7 +2721,7 @@ final class FilterTest extends TestCaseAbstract
                         'direction' => 'ASC',
                     ],
                 ], self::PAGING => [self::PAGE => '3', self::ITEMS_PER_PAGE => '2'],
-            ]
+            ],
         );
         $result = (new DocumentFilter($this->dm))->getData($dto)->toArray();
         self::assertEquals(
@@ -2743,7 +2742,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
         self::assertEquals(
             [
@@ -2754,7 +2753,7 @@ final class FilterTest extends TestCaseAbstract
                 'search'       => NULL,
                 'total'        => 10,
             ],
-            $dto->getParamsForHeader()
+            $dto->getParamsForHeader(),
         );
 
         $dto    = (new GridRequestDto(
@@ -2765,7 +2764,7 @@ final class FilterTest extends TestCaseAbstract
                         'direction' => 'ASC',
                     ],
                 ], self::PAGING => [self::PAGE => '3'],
-            ]
+            ],
         ))->setItemsPerPage(2);
         $result = (new DocumentFilter($this->dm))->getData($dto)->toArray();
         self::assertEquals(
@@ -2786,7 +2785,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
         self::assertEquals(
             [
@@ -2797,7 +2796,7 @@ final class FilterTest extends TestCaseAbstract
                 'search'       => NULL,
                 'total'        => 10,
             ],
-            $dto->getParamsForHeader()
+            $dto->getParamsForHeader(),
         );
 
         $document = (new DocumentFilter($this->dm));
@@ -2808,7 +2807,7 @@ final class FilterTest extends TestCaseAbstract
                 self::SORTER    => [
                     ['direction' => 'ASC', 'column' => 'id'],
                 ], self::PAGING => [self::PAGE => '3', self::ITEMS_PER_PAGE => '2'],
-            ]
+            ],
         );
         $result = $document->getData($dto)->toArray();
         self::assertEquals(
@@ -2829,7 +2828,7 @@ final class FilterTest extends TestCaseAbstract
                     'date'   => $this->today->modify('1 day')->format(self::DATETIME),
                 ],
             ],
-            $result
+            $result,
         );
         self::assertEquals(
             [
@@ -2840,7 +2839,7 @@ final class FilterTest extends TestCaseAbstract
                 'search'       => NULL,
                 'total'        => 10,
             ],
-            $dto->getParamsForHeader()
+            $dto->getParamsForHeader(),
         );
     }
 
@@ -2852,7 +2851,7 @@ final class FilterTest extends TestCaseAbstract
         $dto    = new GridRequestDto(
             [
                 self::SEARCH => 'Unknown',
-            ]
+            ],
         );
         $result = (new DocumentFilter($this->dm))->getData($dto)->toArray();
         self::assertEquals([], $result);
@@ -2865,7 +2864,7 @@ final class FilterTest extends TestCaseAbstract
                 'total'        => 0,
                 'sorter'       => NULL,
             ],
-            $dto->getParamsForHeader()
+            $dto->getParamsForHeader(),
         );
     }
 
@@ -2877,7 +2876,7 @@ final class FilterTest extends TestCaseAbstract
         $dto = new GridRequestDto(
             [
                 self::SEARCH => 'Unknown',
-            ]
+            ],
         );
         $f   = new DocumentFilter($this->dm);
 
@@ -2893,7 +2892,6 @@ final class FilterTest extends TestCaseAbstract
      */
     public function testGetDataThrow(): void
     {
-        /** @var GridRequestDto|MockObject $dto */
         $dto = self::createPartialMock(GridRequestDto::class, ['setTotal']);
         $dto->method('setTotal')->willThrowException(new CommandException('', 123));
         $this->setProperty($dto, 'headers', []);
@@ -2911,7 +2909,7 @@ final class FilterTest extends TestCaseAbstract
         $dto = new GridRequestDto(
             [
                 self::SORTER => [[]],
-            ]
+            ],
         );
 
         self::expectException(GridException::class);
@@ -2926,7 +2924,7 @@ final class FilterTest extends TestCaseAbstract
         $dto = new GridRequestDto(
             [
                 self::SORTER => ['a'],
-            ]
+            ],
         );
 
         self::expectException(GridException::class);
@@ -2941,7 +2939,7 @@ final class FilterTest extends TestCaseAbstract
         $dto = new GridRequestDto(
             [
                 self::SORTER => [['column' => 'a', 'direction' => 'b']],
-            ]
+            ],
         );
 
         self::expectException(GridException::class);
@@ -2956,7 +2954,7 @@ final class FilterTest extends TestCaseAbstract
         $dto = new GridRequestDto(
             [
                 self::FILTER => ['a'],
-            ]
+            ],
         );
 
         self::expectException(GridException::class);
@@ -2971,7 +2969,7 @@ final class FilterTest extends TestCaseAbstract
         $dto = new GridRequestDto(
             [
                 self::FILTER => [[[]]],
-            ]
+            ],
         );
 
         self::expectException(GridException::class);
@@ -2986,7 +2984,7 @@ final class FilterTest extends TestCaseAbstract
         $dto = new GridRequestDto(
             [
                 self::FILTER => [[['column' => 'a', 'operator' => 'b']]],
-            ]
+            ],
         );
 
         self::assertNotEmpty($dto->getFilter(FALSE));
@@ -3000,7 +2998,7 @@ final class FilterTest extends TestCaseAbstract
         $dto = new GridRequestDto(
             [
                 self::SEARCH => 'Unknown',
-            ]
+            ],
         );
         $f   = $this->getMockBuilder(DocumentFilter::class)
             ->setMethods(['configCustomCountQuery'])
@@ -3020,7 +3018,7 @@ final class FilterTest extends TestCaseAbstract
                 'total'        => 0,
                 'sorter'       => NULL,
             ],
-            $dto->getParamsForHeader()
+            $dto->getParamsForHeader(),
         );
     }
 
@@ -3049,7 +3047,7 @@ final class FilterTest extends TestCaseAbstract
                     'previousPage' => 1,
                 ],
             ],
-            $result
+            $result,
         );
     }
 
@@ -3069,7 +3067,7 @@ final class FilterTest extends TestCaseAbstract
                     ->setInt($i)
                     ->setFloat((float) sprintf('%s.%s', $i, $i))
                     ->setBool($i % 2 === 0)
-                    ->setDate(new DateTime(sprintf('today +%s day', $i), new DateTimeZone('UTC')))
+                    ->setDate(new DateTime(sprintf('today +%s day', $i), new DateTimeZone('UTC'))),
             );
         }
 

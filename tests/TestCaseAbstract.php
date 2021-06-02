@@ -29,7 +29,7 @@ abstract class TestCaseAbstract extends TestCase
     /**
      * @var DocumentManager
      */
-    protected $dm;
+    protected DocumentManager $dm;
 
     /**
      * @throws Exception
@@ -50,9 +50,9 @@ abstract class TestCaseAbstract extends TestCase
             new Client(
                 sprintf('mongodb://%s', getenv('MONGODB_HOST') ?: '127.0.0.1'),
                 [],
-                ['typeMap' => self::CLIENT_TYPEMAP]
+                ['typeMap' => self::CLIENT_TYPEMAP],
             ),
-            $configuration
+            $configuration,
         );
         $this->dm->getClient()->dropDatabase(static::DATABASE);
         $this->dm->getSchemaManager()->createCollections();

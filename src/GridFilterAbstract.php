@@ -171,8 +171,8 @@ abstract class GridFilterAbstract
                 throw new LogicException(
                     sprintf(
                         "Column cannot be used for searching! Missing TEXT index on '%s::searchableCols' fields!",
-                        static::class
-                    )
+                        static::class,
+                    ),
                 );
             }
 
@@ -227,15 +227,15 @@ abstract class GridFilterAbstract
                     ->addOr($builder->expr()->field($name)->equals(self::getValue($value)));
             case self::LIKE:
                 return $builder->expr()->field($name)->equals(
-                    new Regex(sprintf('%s', preg_quote(self::getValue($value))), 'i')
+                    new Regex(sprintf('%s', preg_quote(self::getValue($value))), 'i'),
                 );
             case self::STARTS:
                 return $builder->expr()->field($name)->equals(
-                    new Regex(sprintf('^%s', preg_quote(self::getValue($value))), 'i')
+                    new Regex(sprintf('^%s', preg_quote(self::getValue($value))), 'i'),
                 );
             case self::ENDS:
                 return $builder->expr()->field($name)->equals(
-                    new Regex(sprintf('%s$', preg_quote(self::getValue($value))), 'i')
+                    new Regex(sprintf('%s$', preg_quote(self::getValue($value))), 'i'),
                 );
             case self::BETWEEN:
                 if (is_array($value) && count($value) >= 2) {
@@ -331,9 +331,9 @@ abstract class GridFilterAbstract
                         sprintf(
                             "Column '%s' cannot be used for sorting! Have you forgotten add it to '%s::orderCols'?",
                             $column,
-                            static::class
+                            static::class,
                         ),
-                        GridException::SORT_COLS_ERROR
+                        GridException::SORT_COLS_ERROR,
                     );
                 }
 
@@ -368,8 +368,8 @@ abstract class GridFilterAbstract
                             "Advanced filter must have '%s', '%s' and '%s' field!",
                             self::COLUMN,
                             self::OPERATOR,
-                            self::VALUE
-                        )
+                            self::VALUE,
+                        ),
                     );
                 }
 
@@ -384,16 +384,16 @@ abstract class GridFilterAbstract
                 $orCondition[self::VALUE] = $this->processDateTime($orCondition[self::VALUE]);
 
                 if (isset($this->filterColsCallbacks[$column])) {
-                    $expression = $builder->expr();
+                    $expr = $builder->expr();
 
                     $this->filterColsCallbacks[$column](
                         $this->searchQuery,
                         $orCondition[self::VALUE],
                         $this->filterCols[$column],
-                        $expression,
+                        $expr,
                         $orCondition[self::OPERATOR]
                     );
-                    $expression->addOr($expression);
+                    $expression->addOr($expr);
 
                     continue;
                 }
@@ -403,8 +403,8 @@ abstract class GridFilterAbstract
                         $builder,
                         $this->filterCols[$column],
                         $orCondition[self::VALUE],
-                        $orCondition[self::OPERATOR]
-                    )
+                        $orCondition[self::OPERATOR],
+                    ),
                 );
             }
 
@@ -431,9 +431,9 @@ abstract class GridFilterAbstract
                 throw new GridException(
                     sprintf(
                         "Column cannot be used for searching! Have you forgotten add it to '%s::searchableCols'?",
-                        static::class
+                        static::class,
                     ),
-                    GridException::SEARCHABLE_COLS_ERROR
+                    GridException::SEARCHABLE_COLS_ERROR,
                 );
             }
 
@@ -443,9 +443,9 @@ abstract class GridFilterAbstract
                         sprintf(
                             "Column '%s' cannot be used for searching! Have you forgotten add it to '%s::filterCols'?",
                             $column,
-                            static::class
+                            static::class,
                         ),
-                        GridException::SEARCHABLE_COLS_ERROR
+                        GridException::SEARCHABLE_COLS_ERROR,
                     );
                 }
 
@@ -515,9 +515,9 @@ abstract class GridFilterAbstract
                 sprintf(
                     "Column '%s' cannot be used for filtering! Have you forgotten add it to '%s::filterCols'?",
                     $column,
-                    static::class
+                    static::class,
                 ),
-                GridException::FILTER_COLS_ERROR
+                GridException::FILTER_COLS_ERROR,
             );
         }
     }

@@ -102,7 +102,7 @@ final class DocumentFilter extends GridFilterAbstract
                 $value,
                 string $name,
                 Expr $expr,
-                ?string $operator
+                ?string $operator,
             ): void {
                 $builder;
                 $operator;
