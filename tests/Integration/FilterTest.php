@@ -2561,6 +2561,96 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'string',
+                                    'operator' => DocumentFilter::IN,
+                                    'value'    => [
+                                        'String 0',
+                                        'String 1',
+                                    ],
+                                ],
+                            ],
+                        ]
+                    ,
+                ],
+            ),
+        )->toArray();
+        self::assertEquals(
+            [
+                [
+                    'id'     => $result[0]['id'],
+                    'string' => 'String 0',
+                    'int'    => 0,
+                    'float'  => 0.0,
+                    'bool'   => TRUE,
+                    'date'   => $this->today->modify('-2 day')->format(self::DATETIME),
+                ],
+                [
+                    'id'     => $result[1]['id'],
+                    'string' => 'String 1',
+                    'int'    => 1,
+                    'float'  => 1.1,
+                    'bool'   => FALSE,
+                    'date'   => $this->today->modify('1 day')->format(self::DATETIME),
+                ],
+            ],
+            $result,
+        );
+
+        $result = (new DocumentFilter($this->dm))->getData(
+            new GridRequestDto(
+                [
+                    self::FILTER =>
+                        [
+                            [
+                                [
+                                    'column'   => 'string',
+                                    'operator' => DocumentFilter::NIN,
+                                    'value'    => [
+                                        'String 2',
+                                        'String 3',
+                                        'String 4',
+                                        'String 5',
+                                        'String 6',
+                                        'String 7',
+                                        'String 8',
+                                        'String 9',
+                                    ],
+                                ],
+                            ],
+                        ]
+                    ,
+                ],
+            ),
+        )->toArray();
+        self::assertEquals(
+            [
+                [
+                    'id'     => $result[0]['id'],
+                    'string' => 'String 0',
+                    'int'    => 0,
+                    'float'  => 0.0,
+                    'bool'   => TRUE,
+                    'date'   => $this->today->modify('-1 day')->format(self::DATETIME),
+                ],
+                [
+                    'id'     => $result[1]['id'],
+                    'string' => 'String 1',
+                    'int'    => 1,
+                    'float'  => 1.1,
+                    'bool'   => FALSE,
+                    'date'   => $this->today->modify('1 day')->format(self::DATETIME),
+                ],
+            ],
+            $result,
+        );
+
+        $result = (new DocumentFilter($this->dm))->getData(
+            new GridRequestDto(
+                [
+                    self::FILTER =>
+                        [
+                            [
+                                [
+                                    'column'   => 'string',
                                     'operator' => DocumentFilter::STARTS,
                                     'value'    => 'St',
                                 ],
@@ -2590,7 +2680,7 @@ final class FilterTest extends TestCaseAbstract
                     'int'    => 3,
                     'float'  => 3.3,
                     'bool'   => FALSE,
-                    'date'   => $this->today->modify('1 day')->format(self::DATETIME),
+                    'date'   => $this->today->modify('2 day')->format(self::DATETIME),
                 ],
             ],
             $result,

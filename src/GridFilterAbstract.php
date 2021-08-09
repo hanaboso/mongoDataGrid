@@ -26,6 +26,8 @@ abstract class GridFilterAbstract
 
     public const EQ       = 'EQ';
     public const NEQ      = 'NEQ';
+    public const IN       = 'IN';
+    public const NIN      = 'NIN';
     public const GT       = 'GT';
     public const LT       = 'LT';
     public const GTE      = 'GTE';
@@ -209,6 +211,10 @@ abstract class GridFilterAbstract
                 return is_array($value) ?
                     $builder->expr()->field($name)->notIn($value) :
                     $builder->expr()->field($name)->notEqual($value);
+            case self::IN:
+                return $builder->expr()->field($name)->in($value);
+            case self::NIN:
+                return $builder->expr()->field($name)->notIn($value);
             case self::GTE:
                 return $builder->expr()->field($name)->gte(self::getValue($value));
             case self::GT:
