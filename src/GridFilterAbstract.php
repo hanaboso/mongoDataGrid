@@ -497,16 +497,18 @@ abstract class GridFilterAbstract
      */
     private function processDateTime(mixed $value): mixed
     {
-        $inner = $value;
-        if (is_array($value)) {
-            $inner = $value[0];
+        $values = $value;
+        if (!is_array($value)) {
+            $values = [$value];
         }
 
-        if (is_string($inner) && preg_match('/\d{4}-\d{2}-\d{2}.\d{2}:\d{2}:\d{2}/', $inner)) {
-            return new DateTime($inner);
+        foreach ($values as $index => $val) {
+            if (is_string($val) && preg_match('/\d{4}-\d{2}-\d{2}.\d{2}:\d{2}:\d{2}/', $val)) {
+                $values[$index] = new DateTime($val);
+            }
         }
 
-        return $value;
+        return $values;
     }
 
     /**
