@@ -16,6 +16,7 @@ class GridRequestDto implements GridRequestDtoInterface
     public const  ITEMS          = 'items';
     public const  ITEMS_PER_PAGE = 'itemsPerPage';
     public const  FILTER         = 'filter';
+    public const  NATIVE         = 'native';
     public const  PAGE           = 'page';
     public const  PAGING         = 'paging';
     public const  TOTAL          = 'total';
@@ -43,6 +44,11 @@ class GridRequestDto implements GridRequestDtoInterface
      * @var int
      */
     private int $itemsPerPage = 0;
+
+    /**
+     * @var mixed[]
+     */
+    private array $native = [];
 
     /**
      * GridRequestDto constructor.
@@ -233,6 +239,14 @@ class GridRequestDto implements GridRequestDtoInterface
     public function getSearch(): ?string
     {
         return $this->headers[self::SEARCH] ?? NULL;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function getNativeQuery(): array
+    {
+        return $this->headers[self::NATIVE] ?? [];
     }
 
     /**

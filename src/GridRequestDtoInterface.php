@@ -38,6 +38,11 @@ interface GridRequestDtoInterface
     public function getOrderBy(): array;
 
     /**
+     * @return mixed[]
+     */
+    public function getNativeQuery(): array;
+
+    /**
      * @param int $total
      *
      * @return GridRequestDtoInterface
