@@ -4,6 +4,8 @@ namespace Hanaboso\MongoDataGrid;
 
 use DateTime;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Iterator\Iterator;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Query\Expr;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
@@ -49,7 +51,17 @@ abstract class GridFilterAbstract
     public const DIRECTION = 'direction';
     public const SEARCH    = 'search';
 
-    protected const DATE_FORMAT = DateTimeUtils::DATE_TIME;
+    protected const DATE_FORMAT = DateTimeUtils::DATE_TIME_UTC;
+
+    /**
+     * @var bool
+     */
+    protected bool $allowNative = FALSE;
+
+    /**
+     * @var mixed[]
+     */
+    protected array $projection = [];
 
     /**
      * @var string
@@ -146,6 +158,11 @@ abstract class GridFilterAbstract
      */
     public function getData(GridRequestDtoInterface $gridRequestDto): ResultData
     {
+        $nat = $gridRequestDto->getNativeQuery();
+        if ($this->allowNative && $nat) {
+            return $this->nativeQuery($gridRequestDto);
+        }
+
         $this->searchQuery = $this->prepareSearchQuery();
         $this->countQuery  = $this->configCustomCountQuery();
         $this->searchQuery->hydrate(FALSE);
@@ -162,7 +179,11 @@ abstract class GridFilterAbstract
         $this->processPagination($gridRequestDto);
 
         try {
-            $data = new ResultData($this->searchQuery->getQuery(), static::DATE_FORMAT);
+            /** @var Iterator<mixed> $data */
+            $data = $this->searchQuery->getQuery()->execute();
+            $data = $data->toArray();
+
+            $data = new ResultData($data, static::DATE_FORMAT);
             /** @var Builder $countQuery */
             $countQuery = $this->countQuery;
             /** @var int $total */
@@ -322,11 +343,97 @@ abstract class GridFilterAbstract
     /**
      * @param GridRequestDtoInterface $dto
      *
+     * @return ResultData
+     * @throws MongoDBException
+     * @throws GridException
+     */
+    private function nativeQuery(GridRequestDtoInterface $dto): ResultData
+    {
+        $native = $dto->getNativeQuery();
+        $ors    = [];
+
+        foreach ($dto->getFilter() as $and) {
+            $parsed = [];
+            foreach ($and as $or) {
+                $this->checkFilterColumn($or[self::COLUMN]);
+                $parsed[] = $this->getNativeCondition(
+                    $or[self::COLUMN],
+                    $this->processDateTime($or[self::VALUE]),
+                    $or[self::OPERATOR],
+                );
+            }
+            $ors[] = ['$or' => $parsed];
+        }
+        if ($ors) {
+            $native['$and'] = $ors;
+        }
+
+        $search = $dto->getSearch();
+        if ($search) {
+            if ($this->useTextSearch) {
+                $native['$text'] = ['$search' => $search];
+            }
+            $searches = [];
+            foreach ($this->searchableCols as $column) {
+                $searches[] = [$column => new Regex($search, 'i')];
+            }
+            if ($searches) {
+                $native['$and'][] = ['$or' => $searches];
+            }
+        }
+
+        $options = [
+            'limit'      => $dto->getItemsPerPage(),
+            'skip'       => ($dto->getPage() - 1) * $dto->getItemsPerPage(),
+            'sort'       => $this->nativeSortations($dto),
+            'projection' => $this->projection,
+        ];
+
+        $items = $this->dm->getDocumentCollection($this->document)->find($native, $options)->toArray();
+        $dto->setTotal($this->dm->getDocumentCollection($this->document)->countDocuments($native));
+
+        return new ResultData($items);
+    }
+
+    /**
+     * @param GridRequestDtoInterface $dto
+     *
      * @throws GridException
      */
     private function processSortations(GridRequestDtoInterface $dto): void
     {
+        $sortations = $this->parseSortations($dto);
+        foreach ($sortations as $column => $direction) {
+            $this->searchQuery->sort($this->orderCols[$column], $direction);
+        }
+    }
+
+    /**
+     * @param GridRequestDtoInterface $dto
+     *
+     * @return mixed[]
+     * @throws GridException
+     */
+    private function nativeSortations(GridRequestDtoInterface $dto): array
+    {
+        $sorts = [];
+        foreach ($this->parseSortations($dto) as $column => $direction) {
+            $sorts[$column] = strtolower($direction) === 'asc' ? 1 : -1;
+        }
+
+        return $sorts;
+    }
+
+    /**
+     * @param GridRequestDtoInterface $dto
+     *
+     * @return mixed[]
+     * @throws GridException
+     */
+    private function parseSortations(GridRequestDtoInterface $dto): array
+    {
         $sortations = $dto->getOrderBy();
+        $toSort     = [];
 
         if ($sortations) {
             foreach ($sortations as $sortation) {
@@ -343,9 +450,11 @@ abstract class GridFilterAbstract
                     );
                 }
 
-                $this->searchQuery->sort($this->orderCols[$column], $direction);
+                $toSort[$column] = $direction;
             }
         }
+
+        return $toSort;
     }
 
     /**
@@ -528,6 +637,73 @@ abstract class GridFilterAbstract
                 GridException::FILTER_COLS_ERROR,
             );
         }
+    }
+
+    /**
+     * @param string      $name
+     * @param mixed       $value
+     * @param string|null $operator
+     *
+     * @return mixed[]
+     */
+    private function getNativeCondition(string $name, mixed $value, ?string $operator = NULL): array
+    {
+        switch ($operator) {
+            case self::EQ:
+                return is_array($value) ?
+                    [$name => ['$in' => $value]] :
+                    [$name => ['$eq' => $value]];
+            case self::NEQ:
+                return is_array($value) ?
+                    [$name => ['$nin' => $value]] :
+                    [$name => ['$not' => ['$eq' => $value]]];
+            case self::IN:
+                return [$name => ['$in' => $value]];
+            case self::NIN:
+                return [$name => ['$nin' => $value]];
+            case self::GTE:
+                return [$name => ['$gte' => self::getValue($value)]];
+            case self::GT:
+                return [$name => ['$gt' => self::getValue($value)]];
+            case self::LTE:
+                return [$name => ['$lte' => self::getValue($value)]];
+            case self::LT:
+                return [$name => ['$lt' => self::getValue($value)]];
+            case self::NEMPTY:
+                return [$name => ['$not' => ['$eq' => NULL]]];
+            case self::EMPTY:
+                return [$name => ['$eq' => NULL]];
+            case self::LIKE:
+                return [$name => ['$regex' => new Regex(sprintf('%s', preg_quote(self::getValue($value))), 'i')]];
+            case self::STARTS:
+                return [$name => ['$regex' => new Regex(sprintf('^%s', preg_quote(self::getValue($value))), 'i')]];
+            case self::ENDS:
+                return [$name => ['$regex' => new Regex(sprintf('%s$', preg_quote(self::getValue($value))), 'i')]];
+            case self::BETWEEN:
+                if (is_array($value) && count($value) >= 2) {
+                    return [
+                        $name => [
+                            '$gte' => $value[0],
+                            '$lte' => $value[1],
+                        ],
+                    ];
+                }
+
+                throw new GridException('BETWEEN requires 2 values');
+            case self::NBETWEEN:
+                if (is_array($value) && count($value) >= 2) {
+                    return [
+                        $name => [
+                            '$gte' => $value[1],
+                            '$lte' => $value[0],
+                        ],
+                    ];
+                }
+
+                throw new GridException('NBETWEEN requires 2 values');
+        }
+
+        throw new GridException(sprintf('unknown operator [%s]', $operator));
     }
 
     /**

@@ -30,6 +30,7 @@ final class FilterTest extends TestCaseAbstract
     private const FILTER   = 'filter';
     private const PAGE     = 'page';
     private const SEARCH   = 'search';
+    private const NATIVE   = 'native';
 
     private const ITEMS_PER_PAGE = 'itemsPerPage';
 
@@ -3139,6 +3140,241 @@ final class FilterTest extends TestCaseAbstract
             ],
             $result,
         );
+    }
+
+    /**
+     *
+     */
+    public function testNativeQuery(): void
+    {
+        $dto    = new GridRequestDto(
+            [
+                self::NATIVE => ['string' => 'String 4'],
+                self::SEARCH => 'string',
+                self::FILTER => [
+                    [
+                        [
+                            'column'   => 'int',
+                            'value'    => [4],
+                            'operator' => 'EQ',
+                        ],
+                    ],
+                ],
+                self::SORTER => [
+                    [
+                        'column'    => 'id',
+                        'direction' => 'ASC',
+                    ],
+                ],
+            ],
+        );
+        $result = GridFilterAbstract::getGridResponse($dto, (new DocumentFilter($this->dm))->getData($dto)->toArray());
+
+        self::assertEquals(
+            [
+                'items'  => [
+                    [
+                        'id'     => $result['items'][0]['id'],
+                        'string' => 'String 4',
+                        'int'    => 4,
+                        'float'  => 4.4,
+                        'bool'   => TRUE,
+                        'date'   => $result['items'][0]['date'],
+                    ],
+                ],
+                'filter' => [
+                    [
+                        [
+                            'column'   => 'int',
+                            'value'    => [4],
+                            'operator' => 'EQ',
+                        ],
+                    ],
+                ],
+                'sorter' => [
+                    [
+                        'column'    => 'id',
+                        'direction' => 'ASC',
+                    ],
+                ],
+                'search' => 'string',
+                'paging' => [
+                    'page'         => 1,
+                    'itemsPerPage' => 10,
+                    'total'        => 1,
+                    'nextPage'     => 1,
+                    'lastPage'     => 1,
+                    'previousPage' => 1,
+                ],
+            ],
+            $result,
+        );
+    }
+
+    /**
+     *
+     */
+    public function testNativeConditions(): void
+    {
+        $dto = new GridRequestDto(
+            [
+                self::NATIVE => ['string' => 'String 4'],
+                self::FILTER => [
+                    [
+                        [
+                            'column'   => 'int',
+                            'value'    => [4],
+                            'operator' => 'EQ',
+                        ],
+                        [
+                            'column'   => 'int',
+                            'value'    => [4],
+                            'operator' => 'NEQ',
+                        ],
+                        [
+                            'column'   => 'int',
+                            'value'    => [4],
+                            'operator' => 'GT',
+                        ],
+                        [
+                            'column'   => 'int',
+                            'value'    => [4],
+                            'operator' => 'GTE',
+                        ],
+                        [
+                            'column'   => 'int',
+                            'value'    => [4],
+                            'operator' => 'LT',
+                        ],
+                        [
+                            'column'   => 'int',
+                            'value'    => [4],
+                            'operator' => 'LTE',
+                        ],
+                        [
+                            'column'   => 'int',
+                            'value'    => [4],
+                            'operator' => 'IN',
+                        ],
+                        [
+                            'column'   => 'int',
+                            'value'    => [4],
+                            'operator' => 'NIN',
+                        ],
+                        [
+                            'column'   => 'int',
+                            'value'    => [4, 5],
+                            'operator' => 'BETWEEN',
+                        ],
+                        [
+                            'column'   => 'int',
+                            'value'    => [4, 5],
+                            'operator' => 'NBETWEEN',
+                        ],
+                        [
+                            'column'   => 'string',
+                            'value'    => ['s'],
+                            'operator' => 'LIKE',
+                        ],
+                        [
+                            'column'   => 'string',
+                            'value'    => ['s'],
+                            'operator' => 'STARTS',
+                        ],
+                        [
+                            'column'   => 'string',
+                            'value'    => ['s'],
+                            'operator' => 'ENDS',
+                        ],
+                        [
+                            'column'   => 'string',
+                            'value'    => [],
+                            'operator' => 'EMPTY',
+                        ],
+                        [
+                            'column'   => 'string',
+                            'value'    => [],
+                            'operator' => 'NEMPTY',
+                        ],
+                    ],
+                ],
+            ],
+        );
+
+        $result = GridFilterAbstract::getGridResponse($dto, (new DocumentFilter($this->dm))->getData($dto)->toArray());
+        self::assertNotEmpty($result['items'] ?? []);
+    }
+
+    /**
+     *
+     */
+    public function testNativeConditionBetweenError(): void
+    {
+        self::expectExceptionMessage('BETWEEN requires 2 values');
+        $dto = new GridRequestDto(
+            [
+                self::NATIVE => ['string' => 'String 4'],
+                self::FILTER => [
+                    [
+                        [
+                            'column'   => 'int',
+                            'value'    => [4],
+                            'operator' => 'BETWEEN',
+                        ],
+                    ],
+                ],
+            ],
+        );
+
+        GridFilterAbstract::getGridResponse($dto, (new DocumentFilter($this->dm))->getData($dto)->toArray());
+    }
+
+    /**
+     *
+     */
+    public function testNativeConditionNbetweenError(): void
+    {
+        self::expectExceptionMessage('NBETWEEN requires 2 values');
+        $dto = new GridRequestDto(
+            [
+                self::NATIVE => ['string' => 'String 4'],
+                self::FILTER => [
+                    [
+                        [
+                            'column'   => 'int',
+                            'value'    => [4],
+                            'operator' => 'NBETWEEN',
+                        ],
+                    ],
+                ],
+            ],
+        );
+
+        GridFilterAbstract::getGridResponse($dto, (new DocumentFilter($this->dm))->getData($dto)->toArray());
+    }
+
+    /**
+     *
+     */
+    public function testNativeConditionOperatorError(): void
+    {
+        self::expectExceptionMessage('unknown operator [losos]');
+        $dto = new GridRequestDto(
+            [
+                self::NATIVE => ['string' => 'String 4'],
+                self::FILTER => [
+                    [
+                        [
+                            'column'   => 'int',
+                            'value'    => [4],
+                            'operator' => 'losos',
+                        ],
+                    ],
+                ],
+            ],
+        );
+
+        GridFilterAbstract::getGridResponse($dto, (new DocumentFilter($this->dm))->getData($dto)->toArray());
     }
 
     /**

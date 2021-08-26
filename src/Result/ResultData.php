@@ -2,9 +2,7 @@
 
 namespace Hanaboso\MongoDataGrid\Result;
 
-use Doctrine\ODM\MongoDB\Iterator\Iterator;
 use Doctrine\ODM\MongoDB\MongoDBException;
-use Doctrine\ODM\MongoDB\Query\Query;
 use Hanaboso\Utils\Date\DateTimeUtils;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
@@ -20,10 +18,10 @@ class ResultData
     /**
      * ResultData constructor.
      *
-     * @param Query<mixed> $query
-     * @param string       $dateFormat
+     * @param mixed[] $data
+     * @param string  $dateFormat
      */
-    public function __construct(private Query $query, private string $dateFormat = DateTimeUtils::DATE_TIME)
+    public function __construct(private array $data, private string $dateFormat = DateTimeUtils::DATE_TIME_UTC)
     {
     }
 
@@ -33,9 +31,7 @@ class ResultData
      */
     public function toArray(): array
     {
-        /** @var Iterator<mixed> $data */
-        $data = $this->query->execute();
-        $data = $data->toArray();
+        $data = $this->data;
 
         foreach ($data as $key => $item) {
             foreach ($item as $innerKey => $innerItem) {

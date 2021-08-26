@@ -5,6 +5,7 @@ namespace MongoDataGridTests\Filter;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Query\Expr;
 use Hanaboso\MongoDataGrid\GridFilterAbstract;
+use Hanaboso\Utils\Date\DateTimeUtils;
 use MongoDataGridTests\Document\Document;
 
 /**
@@ -14,6 +15,10 @@ use MongoDataGridTests\Document\Document;
  */
 final class DocumentFilter extends GridFilterAbstract
 {
+
+    protected const DATE_FORMAT = DateTimeUtils::DATE_TIME;
+
+    protected bool $allowNative = TRUE;
 
     /**
      * @return mixed[]
