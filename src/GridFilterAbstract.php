@@ -41,6 +41,8 @@ abstract class GridFilterAbstract
     public const EMPTY    = 'EMPTY';
     public const BETWEEN  = 'BETWEEN';
     public const NBETWEEN = 'NBETWEEN';
+    public const EXIST    = 'EXIST';
+    public const NEXIST   = 'NEXIST';
 
     public const ASCENDING  = 'ASC';
     public const DESCENDING = 'DESC';
@@ -280,6 +282,10 @@ abstract class GridFilterAbstract
                 }
 
                 return $builder->expr()->field($name)->notEqual(self::getValue($value));
+            case self::EXIST:
+                return  $builder->expr()->field($name)->exists(TRUE);
+            case self::NEXIST:
+                return  $builder->expr()->field($name)->exists(FALSE);
             default:
                 return $builder->expr()->field($name)->equals(self::getValue($value));
         }
@@ -477,7 +483,11 @@ abstract class GridFilterAbstract
                 if (!array_key_exists(self::COLUMN, $orCondition) ||
                     !array_key_exists(self::OPERATOR, $orCondition) ||
                     !array_key_exists(self::VALUE, $orCondition) &&
-                    !in_array($orCondition[self::OPERATOR], [self::EMPTY, self::NEMPTY], TRUE)) {
+                    !in_array(
+                        $orCondition[self::OPERATOR],
+                        [self::EMPTY, self::NEMPTY, self::EXIST, self::NEXIST],
+                        TRUE,
+                    )) {
                     throw new LogicException(
                         sprintf(
                             "Advanced filter must have '%s', '%s' and '%s' field!",

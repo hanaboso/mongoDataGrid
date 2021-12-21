@@ -2932,6 +2932,64 @@ final class FilterTest extends TestCaseAbstract
             ],
             $dto->getParamsForHeader(),
         );
+
+        $document = (new DocumentFilter($this->dm));
+        $this->setProperty($document, 'countQuery', NULL);
+        $dto    = new GridRequestDto(
+            [
+                self::FILTER =>
+                    [
+                        [
+                            [
+                                'column'   => 'string2',
+                                'operator' => DocumentFilter::EXIST,
+                            ],
+                        ],
+                    ],
+            ],
+        );
+        $result = $document->getData($dto)->toArray();
+        self::assertEquals([], $result);
+        self::assertEquals(
+            [
+                'filter'       => '[[{"column":"string2","operator":"EXIST"}]]',
+                'sorter'       => NULL,
+                'page'         => 1,
+                'itemsPerPage' => 10,
+                'search'       => NULL,
+                'total'        => 0,
+            ],
+            $dto->getParamsForHeader(),
+        );
+
+        $document = (new DocumentFilter($this->dm));
+        $this->setProperty($document, 'countQuery', NULL);
+        $dto    = new GridRequestDto(
+            [
+                self::FILTER =>
+                    [
+                        [
+                            [
+                                'column'   => 'string',
+                                'operator' => DocumentFilter::NEXIST,
+                            ],
+                        ],
+                    ],
+            ],
+        );
+        $result = $document->getData($dto)->toArray();
+        self::assertEquals([], $result);
+        self::assertEquals(
+            [
+                'filter'       => '[[{"column":"string","operator":"NEXIST"}]]',
+                'sorter'       => NULL,
+                'page'         => 1,
+                'itemsPerPage' => 10,
+                'search'       => NULL,
+                'total'        => 0,
+            ],
+            $dto->getParamsForHeader(),
+        );
     }
 
     /**

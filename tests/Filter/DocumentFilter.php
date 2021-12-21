@@ -28,6 +28,7 @@ final class DocumentFilter extends GridFilterAbstract
         return [
             'id'            => '_id',
             'string'        => 'string',
+            'string2'       => 'string2',
             'int'           => 'int',
             'float'         => 'float',
             'bool'          => 'bool',

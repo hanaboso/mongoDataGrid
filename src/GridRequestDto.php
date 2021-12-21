@@ -46,11 +46,6 @@ class GridRequestDto implements GridRequestDtoInterface
     private int $itemsPerPage = 0;
 
     /**
-     * @var mixed[]
-     */
-    private array $native = [];
-
-    /**
      * GridRequestDto constructor.
      *
      * @param mixed[] $headers

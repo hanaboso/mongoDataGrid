@@ -7,6 +7,9 @@ parameters:
 			message: '#Type mixed in generic type Doctrine.* #'
 			path:  src/GridFilterAbstract.php
 		-
+			message: '#Method Hanaboso\\MongoDataGrid\\GridFilterAbstract#'
+			path:  src/GridFilterAbstract.php
+		-
 			message: '#Call to method findAll.* #'
 			path:  tests/Integration/DatabaseConfigurationTest.php
 	ergebnis:
