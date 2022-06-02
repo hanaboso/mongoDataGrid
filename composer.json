@@ -2,14 +2,14 @@
     "name": "hanaboso/mongo-data-grid",
     "description": "MongoDataGrid",
     "license": "Apache-2.0",
-    "version": "1.6.3",
+    "version": "1.6.4",
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "ext-ctype": "*",
         "ext-intl": "*",
         "ext-mbstring": "*",
         "ext-mongodb": "*",
-        "doctrine/mongodb-odm": "^2.3",
+        "doctrine/mongodb-odm": "^2.4",
         "hanaboso/utils": "^1.1"
     },
     "require-dev": {

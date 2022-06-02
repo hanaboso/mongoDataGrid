@@ -12,6 +12,9 @@ parameters:
 		-
 			message: '#Call to method findAll.* #'
 			path:  tests/Integration/DatabaseConfigurationTest.php
+		-
+			message: '#Parameter \#1 \$driverImpl of method#'
+			path:  tests/TestCaseAbstract.php
 	ergebnis:
 		classesNotRequiredToBeAbstractOrFinal:
 			- Hanaboso\MongoDataGrid\Result\ResultData
