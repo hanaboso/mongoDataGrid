@@ -2,7 +2,6 @@
 
 namespace Hanaboso\MongoDataGrid\Result;
 
-use Doctrine\ODM\MongoDB\MongoDBException;
 use Hanaboso\Utils\Date\DateTimeUtils;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
@@ -21,13 +20,15 @@ class ResultData
      * @param mixed[] $data
      * @param string  $dateFormat
      */
-    public function __construct(private array $data, private string $dateFormat = DateTimeUtils::DATE_TIME_UTC)
+    public function __construct(
+        private readonly array $data,
+        private readonly string $dateFormat = DateTimeUtils::DATE_TIME_UTC,
+    )
     {
     }
 
     /**
      * @return mixed[]
-     * @throws MongoDBException
      */
     public function toArray(): array
     {

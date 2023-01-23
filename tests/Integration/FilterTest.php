@@ -1850,7 +1850,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'string',
-                                    'operator' => DocumentFilter::EQ,
+                                    'operator' => GridFilterAbstract::EQ,
                                     'value'    => 'String 1',
                                 ],
                             ],
@@ -1881,7 +1881,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'int',
-                                    'operator' => DocumentFilter::EQ,
+                                    'operator' => GridFilterAbstract::EQ,
                                     'value'    => 2,
                                 ],
                             ],
@@ -1912,7 +1912,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'float',
-                                    'operator' => DocumentFilter::EQ,
+                                    'operator' => GridFilterAbstract::EQ,
                                     'value'    => 3.3,
                                 ],
                             ],
@@ -1943,13 +1943,13 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'bool',
-                                    'operator' => DocumentFilter::EQ,
+                                    'operator' => GridFilterAbstract::EQ,
                                     'value'    => TRUE,
                                 ],
                             ], [
                                 [
                                     'column'   => 'string',
-                                    'operator' => DocumentFilter::EQ,
+                                    'operator' => GridFilterAbstract::EQ,
                                     'value'    => 'String 4',
                                 ],
                             ],
@@ -1980,7 +1980,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'date',
-                                    'operator' => DocumentFilter::EQ,
+                                    'operator' => GridFilterAbstract::EQ,
                                     'value'    => (clone $this->today)->modify('1 day')->format(self::DATETIME),
                                 ],
                             ],
@@ -2010,7 +2010,7 @@ final class FilterTest extends TestCaseAbstract
                         [
                             [
                                 'column'   => 'int',
-                                'operator' => DocumentFilter::EQ,
+                                'operator' => GridFilterAbstract::EQ,
                                 'value'    => [6, 7, 8],
                             ],
                         ],
@@ -2055,7 +2055,7 @@ final class FilterTest extends TestCaseAbstract
                         [
                             [
                                 'column'   => 'string',
-                                'operator' => DocumentFilter::EQ,
+                                'operator' => GridFilterAbstract::EQ,
                                 'value'    => 'String 9',
                             ],
                         ],
@@ -2086,7 +2086,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'int',
-                                    'operator' => DocumentFilter::GTE,
+                                    'operator' => GridFilterAbstract::GTE,
                                     'value'    => 8,
                                 ],
                             ],
@@ -2124,7 +2124,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'int',
-                                    'operator' => DocumentFilter::GT,
+                                    'operator' => GridFilterAbstract::GT,
                                     'value'    => 8,
                                 ],
                             ],
@@ -2155,7 +2155,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'int',
-                                    'operator' => DocumentFilter::LT,
+                                    'operator' => GridFilterAbstract::LT,
                                     'value'    => 1,
                                 ],
                             ],
@@ -2186,7 +2186,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'int',
-                                    'operator' => DocumentFilter::LTE,
+                                    'operator' => GridFilterAbstract::LTE,
                                     'value'    => 1,
                                 ],
                             ],
@@ -2224,7 +2224,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'custom_string',
-                                    'operator' => DocumentFilter::EQ,
+                                    'operator' => GridFilterAbstract::EQ,
                                     'value'    => ['String 0'],
                                 ],
                             ],
@@ -2255,7 +2255,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'string',
-                                    'operator' => DocumentFilter::EMPTY,
+                                    'operator' => GridFilterAbstract::EMPTY,
                                 ],
                                 [
                                     'column'   => 'string',
@@ -2278,7 +2278,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'string',
-                                    'operator' => DocumentFilter::NEMPTY,
+                                    'operator' => GridFilterAbstract::NEMPTY,
                                 ],
                             ],
                         ]
@@ -2371,7 +2371,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'string',
-                                    'operator' => DocumentFilter::NEMPTY,
+                                    'operator' => GridFilterAbstract::NEMPTY,
                                     'value'    => '_MODIFIER_VAL_NOT_NULL',
                                 ],
                             ],
@@ -2407,7 +2407,7 @@ final class FilterTest extends TestCaseAbstract
                                 [
                                     [
                                         'column'   => 'Unknown',
-                                        'operator' => DocumentFilter::EQ,
+                                        'operator' => GridFilterAbstract::EQ,
                                         'value'    => '',
                                     ],
                                 ],
@@ -2436,7 +2436,7 @@ final class FilterTest extends TestCaseAbstract
                                 [
                                     [
                                         'column'   => '_MODIFIER_SEARCH',
-                                        'operator' => DocumentFilter::EQ,
+                                        'operator' => GridFilterAbstract::EQ,
                                         'value'    => 'Unknown',
                                     ],
                                 ],
@@ -2483,7 +2483,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'string',
-                                    'operator' => DocumentFilter::EQ,
+                                    'operator' => GridFilterAbstract::EQ,
                                     'value'    => ['String 0', 'String 1'],
                                 ],
                             ],
@@ -2521,7 +2521,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'string',
-                                    'operator' => DocumentFilter::NEQ,
+                                    'operator' => GridFilterAbstract::NEQ,
                                     'value'    => [
                                         'String 0',
                                         'String 1',
@@ -2562,7 +2562,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'string',
-                                    'operator' => DocumentFilter::IN,
+                                    'operator' => GridFilterAbstract::IN,
                                     'value'    => [
                                         'String 0',
                                         'String 1',
@@ -2604,7 +2604,7 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'string',
-                                    'operator' => DocumentFilter::NIN,
+                                    'operator' => GridFilterAbstract::NIN,
                                     'value'    => [
                                         'String 2',
                                         'String 3',
@@ -2652,19 +2652,19 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'string',
-                                    'operator' => DocumentFilter::STARTS,
+                                    'operator' => GridFilterAbstract::STARTS,
                                     'value'    => 'St',
                                 ],
                             ], [
                                 [
                                     'column'   => 'string',
-                                    'operator' => DocumentFilter::LIKE,
+                                    'operator' => GridFilterAbstract::LIKE,
                                     'value'    => 'ri',
                                 ],
                             ], [
                                 [
                                     'column'   => 'string',
-                                    'operator' => DocumentFilter::ENDS,
+                                    'operator' => GridFilterAbstract::ENDS,
                                     'value'    => 'ng 3',
                                 ],
                             ],
@@ -2695,28 +2695,28 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'int',
-                                    'operator' => DocumentFilter::BETWEEN,
+                                    'operator' => GridFilterAbstract::BETWEEN,
                                     'value'    => [4, 7],
                                 ], [
                                     'column'   => 'int',
-                                    'operator' => DocumentFilter::BETWEEN,
+                                    'operator' => GridFilterAbstract::BETWEEN,
                                     'value'    => [5],
                                 ],
                             ], [
                                 [
                                     'column'   => 'float',
-                                    'operator' => DocumentFilter::NBETWEEN,
+                                    'operator' => GridFilterAbstract::NBETWEEN,
                                     'value'    => [1.1, 3.3],
                                 ],
                                 [
                                     'column'   => 'float',
-                                    'operator' => DocumentFilter::NBETWEEN,
+                                    'operator' => GridFilterAbstract::NBETWEEN,
                                     'value'    => 2.2,
                                 ],
                             ], [
                                 [
                                     'column'   => 'float',
-                                    'operator' => DocumentFilter::NBETWEEN,
+                                    'operator' => GridFilterAbstract::NBETWEEN,
                                     'value'    => [6.6, 9.9],
                                 ],
                             ],
@@ -2761,21 +2761,21 @@ final class FilterTest extends TestCaseAbstract
                             [
                                 [
                                     'column'   => 'string',
-                                    'operator' => DocumentFilter::EQ,
+                                    'operator' => GridFilterAbstract::EQ,
                                     'value'    => 'String 5',
                                 ], [
                                     'column'   => 'custom_string',
-                                    'operator' => DocumentFilter::EQ,
+                                    'operator' => GridFilterAbstract::EQ,
                                     'value'    => ['String 5'],
                                 ],
                             ], [
                                 [
                                     'column'   => 'int',
-                                    'operator' => DocumentFilter::GTE,
+                                    'operator' => GridFilterAbstract::GTE,
                                     'value'    => 5,
                                 ], [
                                     'column'   => 'int',
-                                    'operator' => DocumentFilter::LTE,
+                                    'operator' => GridFilterAbstract::LTE,
                                     'value'    => 5,
                                 ],
                             ],
@@ -2942,7 +2942,7 @@ final class FilterTest extends TestCaseAbstract
                         [
                             [
                                 'column'   => 'string2',
-                                'operator' => DocumentFilter::EXIST,
+                                'operator' => GridFilterAbstract::EXIST,
                             ],
                         ],
                     ],
@@ -2971,7 +2971,7 @@ final class FilterTest extends TestCaseAbstract
                         [
                             [
                                 'column'   => 'string',
-                                'operator' => DocumentFilter::NEXIST,
+                                'operator' => GridFilterAbstract::NEXIST,
                             ],
                         ],
                     ],
@@ -3201,7 +3201,7 @@ final class FilterTest extends TestCaseAbstract
     }
 
     /**
-     *
+     * @throws Exception
      */
     public function testNativeQuery(): void
     {
@@ -3270,7 +3270,7 @@ final class FilterTest extends TestCaseAbstract
     }
 
     /**
-     *
+     * @throws Exception
      */
     public function testNativeConditions(): void
     {
@@ -3364,7 +3364,7 @@ final class FilterTest extends TestCaseAbstract
     }
 
     /**
-     *
+     * @throws Exception
      */
     public function testNativeConditionBetweenError(): void
     {
@@ -3388,7 +3388,7 @@ final class FilterTest extends TestCaseAbstract
     }
 
     /**
-     *
+     * @throws Exception
      */
     public function testNativeConditionNbetweenError(): void
     {
@@ -3412,7 +3412,7 @@ final class FilterTest extends TestCaseAbstract
     }
 
     /**
-     *
+     * @throws Exception
      */
     public function testNativeConditionOperatorError(): void
     {

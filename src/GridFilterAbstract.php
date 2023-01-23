@@ -352,6 +352,7 @@ abstract class GridFilterAbstract
      * @return ResultData
      * @throws MongoDBException
      * @throws GridException
+     * @throws Exception
      */
     private function nativeQuery(GridRequestDtoInterface $dto): ResultData
     {
@@ -655,6 +656,7 @@ abstract class GridFilterAbstract
      * @param string|null $operator
      *
      * @return mixed[]
+     * @throws GridException
      */
     private function getNativeCondition(string $name, mixed $value, ?string $operator = NULL): array
     {
