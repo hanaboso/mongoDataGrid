@@ -91,7 +91,7 @@ final class Document
      *
      * @return Document
      */
-    public function setString(string $string): Document
+    public function setString(string $string): self
     {
         $this->string = $string;
 
@@ -111,7 +111,7 @@ final class Document
      *
      * @return Document
      */
-    public function setInt(int $int): Document
+    public function setInt(int $int): self
     {
         $this->int = $int;
 
@@ -131,7 +131,7 @@ final class Document
      *
      * @return Document
      */
-    public function setFloat(float $float): Document
+    public function setFloat(float $float): self
     {
         $this->float = $float;
 
@@ -151,7 +151,7 @@ final class Document
      *
      * @return Document
      */
-    public function setBool(bool $bool): Document
+    public function setBool(bool $bool): self
     {
         $this->bool = $bool;
 
@@ -171,7 +171,7 @@ final class Document
      *
      * @return Document
      */
-    public function setDate(DateTime $date): Document
+    public function setDate(DateTime $date): self
     {
         $this->date = $date;
 

@@ -227,13 +227,13 @@ abstract class GridFilterAbstract
     {
         switch ($operator) {
             case self::EQ:
-                return is_array($value) ?
-                    $builder->expr()->field($name)->in($value) :
-                    $builder->expr()->field($name)->equals($value);
+                return is_array($value)
+                    ? $builder->expr()->field($name)->in($value)
+                    : $builder->expr()->field($name)->equals($value);
             case self::NEQ:
-                return is_array($value) ?
-                    $builder->expr()->field($name)->notIn($value) :
-                    $builder->expr()->field($name)->notEqual($value);
+                return is_array($value)
+                    ? $builder->expr()->field($name)->notIn($value)
+                    : $builder->expr()->field($name)->notEqual($value);
             case self::IN:
                 return $builder->expr()->field($name)->in($value);
             case self::NIN:
@@ -304,18 +304,18 @@ abstract class GridFilterAbstract
         $lastPage = (int) max(1, ceil($dto->getTotal() / $dto->getItemsPerPage()));
 
         return [
-            'items'  => $items,
             'filter' => $dto->getFilter(FALSE),
-            'sorter' => $dto->getOrderBy(),
-            'search' => $dto->getSearch(),
+            'items'  => $items,
             'paging' => [
-                'page'         => $page,
                 'itemsPerPage' => $dto->getItemsPerPage(),
-                'total'        => $total,
-                'nextPage'     => min($lastPage, $page + 1),
                 'lastPage'     => $lastPage,
+                'nextPage'     => min($lastPage, $page + 1),
+                'page'         => $page,
                 'previousPage' => max(1, $page - 1),
+                'total'        => $total,
             ],
+            'search' => $dto->getSearch(),
+            'sorter' => $dto->getOrderBy(),
         ];
     }
 
@@ -391,9 +391,9 @@ abstract class GridFilterAbstract
 
         $options = [
             'limit'      => $dto->getItemsPerPage(),
+            'projection' => $this->projection,
             'skip'       => ($dto->getPage() - 1) * $dto->getItemsPerPage(),
             'sort'       => $this->nativeSortations($dto),
-            'projection' => $this->projection,
         ];
 
         $items = $this->dm->getDocumentCollection($this->document)->find($native, $options)->toArray();
@@ -662,13 +662,13 @@ abstract class GridFilterAbstract
     {
         switch ($operator) {
             case self::EQ:
-                return is_array($value) ?
-                    [$name => ['$in' => $value]] :
-                    [$name => ['$eq' => $value]];
+                return is_array($value)
+                    ? [$name => ['$in' => $value]]
+                    : [$name => ['$eq' => $value]];
             case self::NEQ:
-                return is_array($value) ?
-                    [$name => ['$nin' => $value]] :
-                    [$name => ['$not' => ['$eq' => $value]]];
+                return is_array($value)
+                    ? [$name => ['$nin' => $value]]
+                    : [$name => ['$not' => ['$eq' => $value]]];
             case self::IN:
                 return [$name => ['$in' => $value]];
             case self::NIN:

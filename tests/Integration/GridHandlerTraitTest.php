@@ -29,17 +29,17 @@ final class GridHandlerTraitTest extends TestCaseAbstract
 
         self::assertEquals(
             [
-                'items'  => ['a'],
                 'filter' => [],
-                'sorter' => [],
+                'items'  => ['a'],
                 'paging' => [
-                    'page'         => 1,
                     'itemsPerPage' => 10,
-                    'total'        => 0,
-                    'nextPage'     => 1,
                     'lastPage'     => 1,
+                    'nextPage'     => 1,
+                    'page'         => 1,
                     'previousPage' => 1,
+                    'total'        => 0,
                 ],
+                'sorter' => [],
             ],
             $res,
         );

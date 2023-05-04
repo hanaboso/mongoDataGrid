@@ -26,14 +26,14 @@ final class DocumentFilter extends GridFilterAbstract
     protected function filterCols(): array
     {
         return [
+            'bool'          => 'bool',
+            'custom_string' => 'string',
+            'date'          => 'date',
+            'float'         => 'float',
             'id'            => '_id',
+            'int'           => 'int',
             'string'        => 'string',
             'string2'       => 'string2',
-            'int'           => 'int',
-            'float'         => 'float',
-            'bool'          => 'bool',
-            'date'          => 'date',
-            'custom_string' => 'string',
         ];
     }
 
@@ -43,12 +43,12 @@ final class DocumentFilter extends GridFilterAbstract
     protected function orderCols(): array
     {
         return [
-            'id'     => '_id',
-            'string' => 'string',
-            'int'    => 'int',
-            'float'  => 'float',
             'bool'   => 'bool',
             'date'   => 'date',
+            'float'  => 'float',
+            'id'     => '_id',
+            'int'    => 'int',
+            'string' => 'string',
         ];
     }
 

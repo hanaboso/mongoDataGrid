@@ -143,7 +143,7 @@ class GridRequestDto implements GridRequestDtoInterface
      *
      * @return GridRequestDto
      */
-    public function setItemsPerPage(int $itemsPerPage): GridRequestDto
+    public function setItemsPerPage(int $itemsPerPage): self
     {
         $this->itemsPerPage = $itemsPerPage;
 
@@ -220,11 +220,11 @@ class GridRequestDto implements GridRequestDtoInterface
     {
         return [
             self::FILTER         => $this->formatFilterForHeader($this->getFilter()),
-            self::PAGE           => $this->getPage(),
             self::ITEMS_PER_PAGE => $this->getItemsPerPage(),
-            self::TOTAL          => $this->total,
+            self::PAGE           => $this->getPage(),
             self::SEARCH         => $this->getSearch(),
             self::SORTER         => $this->getOrderByForHeader(),
+            self::TOTAL          => $this->total,
         ];
     }
 
