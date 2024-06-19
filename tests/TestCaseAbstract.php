@@ -7,6 +7,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 use Exception;
 use Hanaboso\PhpCheckUtils\PhpUnit\Traits\PrivateTrait;
+use Hanaboso\PhpCheckUtils\PhpUnit\Traits\RestoreErrorHandlersTrait;
 use MongoDataGridTests\Document\Document;
 use MongoDB\Client;
 use PHPUnit\Framework\TestCase;
@@ -20,6 +21,7 @@ abstract class TestCaseAbstract extends TestCase
 {
 
     use PrivateTrait;
+    use RestoreErrorHandlersTrait;
 
     protected const   TEMP_DIR       = '%s/../var//Doctrine2.ODM';
     protected const   CLIENT_TYPEMAP = ['root' => 'array', 'document' => 'array'];
@@ -54,6 +56,16 @@ abstract class TestCaseAbstract extends TestCase
         $this->dm->getClient()->dropDatabase(static::DATABASE);
         $this->dm->getSchemaManager()->createCollections();
         $this->dm->getSchemaManager()->ensureDocumentIndexes(Document::class);
+    }
+
+    /**
+     * @return void
+     */
+    protected function tearDown(): void {
+        parent::tearDown();
+
+        $this->restoreErrorHandler();
+        $this->restoreExceptionHandler();
     }
 
 }

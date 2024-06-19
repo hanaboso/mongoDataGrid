@@ -87,8 +87,6 @@ final class DocumentFilter extends GridFilterAbstract
      */
     protected function configCustomCountQuery(): ?Builder
     {
-        parent::configCustomCountQuery();
-
         return $this
             ->getRepository()
             ->createQueryBuilder()
@@ -100,8 +98,6 @@ final class DocumentFilter extends GridFilterAbstract
      */
     protected function configFilterColsCallbacks(): array
     {
-        parent::configFilterColsCallbacks();
-
         return [
             'custom_string' => static function (
                 Builder $builder,
